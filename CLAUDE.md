@@ -28,19 +28,27 @@ revisa resultados, da dirección, y relanza.
 ## Environment setup
 
 ```bash
-# Python con uv
-uv sync
-# O con pip
-pip install -r requirements.txt
+# Conda environment
+conda activate eq-distill
+
+# Si no existe, crearlo:
+conda create -n eq-distill python=3.11 -y
+conda activate eq-distill
+pip install openai python-dotenv pandas httpx pytest ruff huggingface_hub
 ```
+
+**IMPORTANTE:** Siempre usar `conda run -n eq-distill python ...` o activar
+el env antes de correr scripts. El watch.sh debe correr dentro del env.
 
 ## Tech stack
 - **Python 3.11+** — lenguaje principal
-- **uv** — package manager
+- **conda** — environment manager (env: `eq-distill`)
+- **openai** — SDK para Azure Foundry API
 - **pandas** — análisis de datos del ETP
-- **httpx** — llamadas a APIs de modelos
+- **httpx** — llamadas HTTP
 - **pytest** — tests
 - **ruff** — linting y formatting
+- **huggingface_hub** — descarga de datasets
 
 ## Project structure
 
@@ -88,8 +96,8 @@ pytest
 ruff check .
 ruff format .
 
-# Evaluar un cheat sheet
-python eval/evaluate.py --cheatsheet cheatsheets/current.txt --problems data/processed/problems.json
+# Evaluar un cheat sheet (multi-modelo: gpt-5-nano, gpt-5-mini, Phi-4)
+python eval/evaluate.py --cheatsheet cheatsheets/current.txt
 
 # Validar tamaño del cheat sheet
 python -c "import os; s=os.path.getsize('cheatsheets/current.txt'); print(f'{s} bytes ({s/1024:.1f}KB)'); assert s<=10240"

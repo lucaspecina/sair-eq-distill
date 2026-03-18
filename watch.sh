@@ -7,6 +7,10 @@
 
 cd "$(dirname "$0")"
 
+# Activate conda environment
+eval "$(conda shell.bash hook)"
+conda activate eq-distill
+
 PROMPT="Read CLAUDE.md (start there section), then TODO.md to see pending tasks. Work on the highest priority pending task. Document findings in docs/RESEARCH.md. Commit progress. Move to the next task. NEVER STOP. The human is asleep."
 
 echo "=== eq-distill autoresearch watcher ==="
