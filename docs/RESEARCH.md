@@ -152,16 +152,120 @@ c3d4e5f   1.005000    44.0        discard   switch to GeLU activation
 
 ## Estrategias de optimización
 
-### A explorar
+### Track 1: Autoresearch (hill-climbing) — YA IMPLEMENTADO
+El loop Karpathy: un cambio atómico al cheat sheet → evaluar → keep/discard.
+- **Pro:** Simple, funciona overnight, ya listo
+- **Contra:** Se puede quedar en óptimos locales, conservador
+- **Status:** Implementado. Baseline 50.7% (3 modelos). Listo para correr.
 
-1. **Análisis del dataset primero** — Entender la estructura antes de optimizar nada
-2. **Heurísticas manuales** — Reglas basadas en matemáticas (sustitución, restrictividad, contraejemplos con magmas chicos)
-3. **Prompt optimization automática** — GEPA (ICLR 2026, reflexión sobre trazas), EvoPrompt (genético), PromptBreeder (meta-evolución)
-4. **Approach evolutivo custom** — Población de cheat sheets, evaluación paralela, subsets rotativos
-5. **Híbrido** — Manual + análisis → optimización automática
+### Track 2: Prompt evolutivo con población — LÍNEA PRIORITARIA
+
+Inspirado en AlphaEvolve, OpenEvolve, ShinkaEvolve, EvoX. En vez de un solo
+cheat sheet que mejora linealmente, mantener una **población** que evoluciona.
+
+#### Frameworks de referencia
+
+**AlphaEvolve** (Google DeepMind, 2025)
+- Diff-based code evolution + MAP-Elites para quality-diversity
+- LLM ensemble: Flash (throughput) + Pro (breakthroughs)
+- Evaluation cascade: tests baratos primero, caros solo para survivors
+- Resultados: mejoró Strassen (1969), recuperó 0.7% compute de Google
+- Cerrado. Paper: https://arxiv.org/abs/2506.13131
+
+**OpenEvolve** (community OSS)
+- Reimplementación open-source de AlphaEvolve
+- MAP-Elites + 5 islands con ring-topology migration
+- Two-phase: exploration → plateau-breaking
+- Multi-provider LLM (OpenAI, Gemini, local)
+- Repo: https://github.com/algorithmicsuperintelligence/openevolve
+
+**ShinkaEvolve** (Sakana AI, 2025)
+- Foco en **sample efficiency** — SOTA con ~150 evaluaciones
+- Novelty rejection-sampling (embeddings + LLM judge) para evitar duplicados
+- UCB bandit para selección dinámica de LLM
+- Meta-scratchpad: acumula conocimiento across generaciones
+- Self-evolving prompts: las instrucciones de mutación también evolucionan
+- Repo: https://github.com/SakanaAI/ShinkaEvolve
+
+**EvoX** (UC Berkeley / SkyDiscover, 2026)
+- **Meta-evolución**: co-evoluciona soluciones Y las estrategias de búsqueda
+- La estrategia de búsqueda se adapta automáticamente (early: explorar, mid: variar, late: refinar)
+- <$1 costo LLM vs $7-15 de competidores
+- 196 tareas benchmark, 34% mejora mediana vs OpenEvolve/GEPA/ShinkaEvolve
+- Paper: https://arxiv.org/abs/2602.23413
+- Repo: https://github.com/skydiscover-ai/skydiscover
+
+#### Aplicación a nuestro caso
+
+El cheatsheet como "programa" a evolucionar:
+- `EVOLVE-BLOCK` markers en el texto del cheat sheet
+- Fitness function = accuracy promedio across modelos chicos
+- Población de cheat sheets con diversidad (MAP-Elites)
+- LLM grande genera mutaciones, modelos chicos evalúan
+
+#### Qué framework usar?
+- **OpenEvolve**: el más maduro OSS, fácil de adaptar
+- **ShinkaEvolve**: si queremos sample efficiency (importante — cada eval cuesta API calls)
+- **EvoX/SkyDiscover**: el más avanzado (meta-evolución) pero más complejo
+
+### Track 3: Cheat sheet modular — COMPLEMENTARIO
+
+Descomponer el cheat sheet en **módulos independientes** (~500 bytes cada uno):
+```
+[Módulo: reglas triviales] [Módulo: sustitución] [Módulo: contraejemplos]
+[Módulo: patrones comunes] [Módulo: heurísticas default] [Módulo: ...]
+```
+- 10KB = ~20 módulos de 500 bytes
+- Cada módulo se evalúa por **ablation**: accuracy CON vs SIN el módulo
+- Los módulos que no aportan se eliminan, se reemplazan por otros
+- Compatible con Track 2: los módulos son los "genes" del evolutivo
+- Crossover = combinar módulos de diferentes cheat sheets
+- Mutación = reescribir un módulo manteniendo los demás
+
+### Track 4: Destilación con modelo grande → chico
+
+1. Darle a un modelo grande (GPT-5.4) el dataset + problemas que fallan
+2. Que identifique patrones compresibles y útiles
+3. Comprimir en el cheat sheet
+4. Evaluar con modelos chicos
+5. Feedback loop: errores → grande refina → comprimir
+
+Variante RL-like: el reward es la accuracy post-compresión.
+
+### Track 5: Análisis del dataset + data-driven rules
+
+Antes de optimizar, entender la estructura:
+- Distribución true/false (37% true, 63% false en la matriz completa)
+- Features sintácticas que predicen implicación (profundidad, variables, largo)
+- Clusters de ecuaciones equivalentes
+- Patrones de los provers automáticos (datos de Vampire en el repo ETP)
+- Reglas algorítmicas extraídas directamente de la data
+
+Las reglas data-driven podrían ser los "módulos" iniciales del Track 3.
+
+### Approach recomendado: Pipeline
+
+```
+Track 5 (análisis) → Track 3 (módulos iniciales) → Track 2 (evolución)
+     ↓                                                     ↓
+Track 1 (autoresearch overnight como baseline)    Track 4 (destilación puntual)
+```
+
+1. **Ahora:** Correr Track 1 overnight para tener un baseline fuerte
+2. **Próximo:** Track 5 — analizar la data, extraer reglas
+3. **Después:** Track 3 + 2 — modularizar el cheatsheet, evolucionar con framework
 
 ### References
-- GEPA paper: ICLR 2026 oral. 35x menos rollouts que GRPO.
+- GEPA: ICLR 2026 oral, 35x menos rollouts que GRPO — https://arxiv.org/abs/2507.19457
+- EvoPrompt: ICLR 2024 — https://arxiv.org/abs/2309.08532
+- PromptBreeder: self-referential self-improvement — https://arxiv.org/abs/2309.16797
+- MCTS-OPS: MCTS para prompt sequences — https://arxiv.org/abs/2508.05995
+- AlphaEvolve: https://arxiv.org/abs/2506.13131
+- OpenEvolve: https://github.com/algorithmicsuperintelligence/openevolve
+- ShinkaEvolve: https://github.com/SakanaAI/ShinkaEvolve
+- EvoX: https://arxiv.org/abs/2602.23413
+- SkyDiscover (EvoX impl): https://github.com/skydiscover-ai/skydiscover
+- Cursor self-summarization: https://cursor.com/blog/self-summarization
 - ETP paper: https://arxiv.org/abs/2512.07087
 - Karpathy autoresearch: https://github.com/karpathy/autoresearch
 - Competencia: https://competition.sair.foundation/competitions/mathematics-distillation-challenge-equational-theories-stage1/overview
