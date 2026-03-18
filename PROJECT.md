@@ -10,14 +10,14 @@ Proyecto para competir en el **Mathematics Distillation Challenge** de la SAIR F
 - **Leyes ecuacionales:** Identidades como `x ◇ y = y ◇ x`. El ETP trabaja con 4694 leyes de hasta 4 operaciones.
 - **Implicación:** A → B es verdadero si todo magma que cumple A necesariamente cumple B.
 - **Cheat sheet:** Texto ≤10KB inyectado en el prompt de un modelo chico para guiar sus predicciones.
-- **Autoresearch:** Loop autónomo de experimentación donde el agente itera sobre el cheat sheet, mide accuracy, y decide keep/discard.
+- **Autoresearch:** Nuestro workflow de trabajo. Claude Code corre autónomamente investigando, prototipando y experimentando. NO es un approach — es cómo trabajamos.
 
 ## Design principles
 
 1. **Métrica sobre intuición** — Cada cambio al cheat sheet se evalúa con accuracy medible. Sin métricas no hay progreso.
 2. **Generalización sobre memorización** — El test set final es privado. Optimizar para entender patrones, no para memorizar respuestas del set público.
 3. **Densidad de información** — 10KB es muy poco. Cada byte debe aportar. Preferir reglas generales sobre listas de casos.
-4. **Iteración rápida** — Patrón autoresearch: cambio atómico → medir → keep/discard → repetir.
+4. **Iteración rápida** — Evaluar ideas rápido, descartar lo que no funciona, profundizar lo que sí.
 5. **Simplicidad** — A igual accuracy, el cheat sheet más simple gana (menos riesgo de overfitting).
 
 ## Architecture overview

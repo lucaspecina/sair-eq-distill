@@ -12,7 +12,22 @@
 Competencia Mathematics Distillation Challenge (SAIR Foundation, Terence Tao).
 Destilar 22M de implicaciones de álgebra universal en un cheat sheet ≤10KB que
 maximice la accuracy de un modelo chico prediciendo "¿ley A implica ley B?".
-Patrón de trabajo: autoresearch (iteración autónoma, medición, keep/discard).
+
+## Cómo trabajamos — autoresearch
+
+**Autoresearch es nuestro workflow, NO un approach para resolver el problema.**
+Es la metodología de trabajo: Claude Code corre autónomamente (overnight o en
+sesiones largas), investigando, prototipando, y experimentando. El humano
+revisa resultados, da dirección, y relanza.
+
+- `program.md` define QUÉ investigar en cada sesión autónoma
+- `watch.sh` relanza Claude si se cae
+- Los hallazgos se documentan en `docs/RESEARCH.md`
+- El progreso se trackea en `TODO.md` y `CHANGELOG.md`
+
+Autoresearch ≠ el loop de Karpathy. El loop de Karpathy (cambio → evaluar →
+keep/discard) es UN approach posible para optimizar el cheatsheet. Autoresearch
+es el marco general de trabajo autónomo.
 
 ## Environment setup
 
