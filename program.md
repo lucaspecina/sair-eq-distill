@@ -91,6 +91,30 @@ For discards, use the commit hash before the reset. For crashes, use `0000000`.
 Go back to step 1. NEVER STOP. NEVER ask the human if you should continue.
 The human might be asleep. Keep experimenting.
 
+## Current baseline
+
+As of 2026-03-18, the baseline cheatsheet scores:
+- **gpt-5-nano**: 64.0% (T:0.52, F:0.78)
+- **gpt-5-mini**: 72.0% (T:0.59, F:0.87)
+- **Phi-4**: 16.0% (T:0.00, F:0.35)
+- **Average: 50.7%**
+
+Key observations from baseline:
+- All models are MUCH better at detecting FALSE (no implication) than TRUE
+- Phi-4 gets 0% on true implications — it never says TRUE
+- The cheat sheet must help models recognize when implications DO hold
+- gpt-5-mini is the strongest model, gpt-5-nano is mid, Phi-4 is weakest
+- Improving Phi-4's true accuracy is the biggest opportunity
+
+## Evaluation details
+
+- Evaluator: `python eval/evaluate.py` (DO NOT MODIFY)
+- Models: gpt-5-nano, gpt-5-mini, Phi-4 (via Azure Foundry)
+- Sample: 30 problems per model, deterministic seed=42
+- Metric: average accuracy across all 3 models
+- Output line to parse: `RESULT: accuracy=X.XXXX correct=N total=M`
+- Each iteration takes ~6 minutes
+
 ## Strategy guidance
 
 ### Phase 1: Foundation (experiments 1-20)
