@@ -1,7 +1,7 @@
 # eq-distill project-specific
 results.tsv
 run.log
-data/raw/
+eval/last_run_details.json
 data/processed/
 
 # Byte-compiled / optimized / DLL files

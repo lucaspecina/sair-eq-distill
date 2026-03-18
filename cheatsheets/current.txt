@@ -1,0 +1,37 @@
+# Equational Theories — Implication Cheat Sheet
+
+## What you're solving
+Given two equational laws A and B for magmas (sets with binary operation ◇),
+determine if A implies B (every magma satisfying A must satisfy B).
+
+## Key Rules
+
+### 1. Trivial implications
+- Every equation implies itself (reflexivity).
+- Equation 1 (x = x) is implied by ALL equations (it's the tautology).
+- Equation 2 (x = y) implies EVERY equation (it collapses the magma to one element).
+
+### 2. Substitution test
+If you can obtain equation B from equation A by substituting variables
+(replacing a variable with a term), then A implies B.
+Example: x ◇ y = y ◇ x (commutativity) implies x ◇ x = x ◇ x (trivially).
+
+### 3. Structural comparison
+- If A is "more restrictive" than B (A forces more constraints), A likely implies B.
+- Count variables: if B uses variables not in A, implication is less likely.
+- Nesting depth: deeper nesting = more restrictive = more likely to imply simpler laws.
+
+### 4. Counterexample strategy
+If unsure, think of small magmas (2-3 elements):
+- A 1-element magma satisfies ALL equations.
+- A 2-element magma with operation table can distinguish many equations.
+- If you can construct a magma satisfying A but not B, answer False.
+
+### 5. Common patterns
+- Idempotent laws (x ◇ x = x) are relatively weak — many magmas satisfy them.
+- Constant laws (x ◇ y = z ◇ w) are very strong — few magmas satisfy them.
+- Associativity and commutativity interact: together they're much stronger.
+
+### 6. Default reasoning
+- Most random pairs do NOT have implications — when in doubt, lean toward False.
+- Implications are more common when equations share similar structure.
