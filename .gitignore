@@ -1,3 +1,9 @@
+# eq-distill project-specific
+results.tsv
+run.log
+data/raw/
+data/processed/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
