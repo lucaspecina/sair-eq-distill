@@ -1,42 +1,33 @@
 ---
 name: experiment
-description: "Run the autoresearch experiment loop. Use when user says 'experiment', 'autoresearch', 'run loop', or 'iterate on cheat sheet'."
+description: "Run a cheatsheet optimization loop (hill-climbing). Use when user says 'experiment', 'iterate on cheat sheet', or 'optimize cheatsheet'."
 disable-model-invocation: true
 ---
 
-# Experiment — Autoresearch Loop
+# Experiment — Cheatsheet Optimization Loop
 
-Run the Karpathy-style autoresearch loop on the cheat sheet.
+This is ONE approach (hill-climbing / Karpathy loop) for improving the cheatsheet.
+It is NOT the only approach — see docs/RESEARCH.md for other tracks.
 
 ## Prerequisites
 - `eval/evaluate.py` must exist and work
 - `cheatsheets/current.txt` must exist (baseline)
-- `program.md` must exist with instructions
 
 ## The Loop
 
-Read `program.md` for full instructions. The core loop:
-
 ```
-LOOP FOREVER:
+LOOP:
 1. Read state: git log, results.tsv, current cheatsheet
 2. Propose ONE atomic change to cheatsheets/current.txt
 3. Validate size ≤10KB
 4. git commit -m "experiment: <description>"
 5. Run: python eval/evaluate.py --cheatsheet cheatsheets/current.txt
-6. Parse accuracy from output
+6. Parse accuracy from RESULT line
 7. If accuracy improved → keep commit
 8. If accuracy same or worse → git reset HEAD~1
 9. Log to results.tsv: commit, accuracy, status, description
-10. NEVER STOP
+10. Repeat
 ```
-
-## Rules
-- ONE change per iteration. Atomic.
-- Always validate ≤10KB before running.
-- If experiment crashes: fix trivial errors, skip fundamental ones.
-- Simpler is better at equal accuracy.
-- Log EVERYTHING to results.tsv (including discards and crashes).
 
 ## results.tsv format
 ```

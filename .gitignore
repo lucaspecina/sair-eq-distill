@@ -1,6 +1,5 @@
 # eq-distill project-specific
 results.tsv
-run.log
 eval/last_run_details.json
 data/processed/
 data/raw/export_raw_implications_*.csv

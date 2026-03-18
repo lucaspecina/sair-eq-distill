@@ -20,14 +20,10 @@ Es la metodología de trabajo: Claude Code corre autónomamente (overnight o en
 sesiones largas), investigando, prototipando, y experimentando. El humano
 revisa resultados, da dirección, y relanza.
 
-- `program.md` define QUÉ investigar en cada sesión autónoma
 - `watch.sh` relanza Claude si se cae
+- `TODO.md` define qué hay que hacer (Claude lee esto al arrancar)
 - Los hallazgos se documentan en `docs/RESEARCH.md`
 - El progreso se trackea en `TODO.md` y `CHANGELOG.md`
-
-Autoresearch ≠ el loop de Karpathy. El loop de Karpathy (cambio → evaluar →
-keep/discard) es UN approach posible para optimizar el cheatsheet. Autoresearch
-es el marco general de trabajo autónomo.
 
 ## Environment setup
 
@@ -55,7 +51,7 @@ eq-distill/
 ├── TODO.md                 # Task tracking
 ├── CURRENT_STATE.md        # Estado actual del sistema
 ├── CHANGELOG.md            # Historial
-├── program.md              # Instrucciones autoresearch (solo humano edita)
+├── watch.sh                # Watcher que relanza Claude overnight
 ├── results.tsv             # Journal de experimentos (untracked)
 ├── data/
 │   ├── raw/                # Datos crudos del ETP
