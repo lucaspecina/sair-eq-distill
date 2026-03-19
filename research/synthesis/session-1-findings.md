@@ -51,8 +51,25 @@
 5. **Analyze benchmark model responses** to extract successful reasoning patterns
 6. **Stone pairing fingerprints** — precompute and describe clusters in cheatsheet
 
-## Baseline Status
-- Cheatsheet v0 (generic): 50.7% avg (nano:64%, mini:72%, Phi-4:16%)
-- Cheatsheet v1 (data-driven): 48.9% avg (nano:63%, mini:80%, Phi-4:3%)
-- Cheatsheet v2 (procedural): pending evaluation
+## Baseline Status (gpt-5-mini, 16K reasoning tokens)
+- Cheatsheet v0 (generic, 1.7KB): 72% → with 16K tokens probably ~78%
+- Cheatsheet v1 (data-driven, 3.1KB): **80%**
+- Cheatsheet v2 (procedural, 3.6KB): 70% (8K tokens), ~80% (16K tokens)
+- Cheatsheet v4 (hybrid, 3.3KB): **80%** (confirmed across two runs: 8/10 + 12/15)
 - Multi-feature predictor ceiling: 85.4% on normal, 54.5% on hard
+
+### CRITICAL FINDING: Token budget matters as much as cheatsheet quality
+Raising max_completion_tokens from 8192 to 16384 improved accuracy by ~10%.
+Reasoning models need space to think. Many "failures" were just truncations.
+
+### Model selection: dropped Phi-4
+Phi-4 is not in SAIR's 25-model benchmark and is too weak for the task.
+Evaluating against gpt-5-nano + gpt-5-mini only.
+
+## Approaches to Try Next
+1. **OpenEvolve for prompt optimization** — prototype ready, needs cascade eval
+2. **Few-shot examples** in cheatsheet (concrete derivation examples)
+3. **Modular cheatsheet** with ablation testing
+4. **Teach model to simulate 2-element magmas** for counterexamples
+5. **Duality rule**: if A→B then dual(A)→dual(B)
+6. **Static quality scorer** for fast evolutionary iteration
