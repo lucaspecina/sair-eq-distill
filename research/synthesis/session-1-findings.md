@@ -104,6 +104,13 @@ The model works better with SHORT, CLEAR instructions focused on the
 4. Quick checks first, deep reasoning second
 5. 2.7KB leaves lots of room for model's own reasoning
 
+### Baseline context: gpt-5-mini without cheatsheet
+From the SAIR benchmark (200 normal problems, default reasoning, no cheatsheet):
+- **93.2% accuracy** — the model is already strong!
+- 85% of errors are false negatives (says FALSE when TRUE)
+- Only 2.2% false positive rate
+- v6 improves this to 96.7% — a 3.5 point gain, primarily by reducing FN rate
+
 ## v6 is Locally Optimal — Manual Improvements Exhausted
 
 Tested 4 variants beyond v6 (v7, v8, v9 with different additions/formats).
