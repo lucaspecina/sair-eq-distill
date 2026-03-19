@@ -13,6 +13,7 @@
 | Evolutionary prompt optimization | [notes/evolution-strategy.md](notes/evolution-strategy.md) | Strategy designed, prototype ready |
 | Magma simulation idea | [notes/magma-simulation-idea.md](notes/magma-simulation-idea.md) | Concept documented |
 | Reasoning patterns quantified | [notes/reasoning-patterns-quantified.md](notes/reasoning-patterns-quantified.md) | Correct vs wrong patterns analyzed |
+| Birkhoff completeness | [notes/birkhoff-completeness.md](notes/birkhoff-completeness.md) | Substitution is theoretically COMPLETE |
 | Isomorphisms with other fields | [notes/isomorphisms.md](notes/isomorphisms.md) | 4 isomorphisms identified |
 
 ## Reading order
