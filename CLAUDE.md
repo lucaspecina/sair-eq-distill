@@ -5,7 +5,7 @@
 2. **CURRENT_STATE.md** — Qué funciona hoy
 3. **TODO.md** — Tareas pendientes y completadas
 4. **CHANGELOG.md** — Historial de cambios
-5. **docs/RESEARCH.md** — Investigación, hallazgos, estrategias
+5. **research/README.md** — Índice de investigación, hallazgos, estrategias
 
 ## Project overview
 
@@ -22,8 +22,40 @@ revisa resultados, da dirección, y relanza.
 
 - `watch.sh` relanza Claude si se cae
 - `TODO.md` define qué hay que hacer (Claude lee esto al arrancar)
-- Los hallazgos se documentan en `docs/RESEARCH.md`
+- Los hallazgos se documentan en `research/`
 - El progreso se trackea en `TODO.md` y `CHANGELOG.md`
+
+### El workflow concreto
+
+Es UNA sesión continua. El watcher solo interviene si crasheo.
+
+**Loop de trabajo:**
+1. Leo TODO.md, elijo la tarea de mayor prioridad
+2. Investigo / prototipo / experimento
+3. Cuando tengo un hallazgo (positivo o negativo), lo documento en `research/notes/`
+4. Si el hallazgo toca el cheatsheet, lo aplico y mido accuracy
+5. Actualizo TODO.md (completar, agregar nuevas tareas que surjan)
+6. Commit con mensaje descriptivo
+7. Siguiente tarea
+
+**Cuándo pivotar de una línea de investigación:**
+- Si estoy girando en círculos sin producir hallazgos documentables → pivotar
+- Si estoy en algo prometedor pero necesito más tiempo → SEGUIR, no abandonar
+  por un timer arbitrario
+- Si llegué a una conclusión clara (funciona o no funciona) → documentar y pivotar
+- Ante la duda: documentar el estado actual, pivotar, se puede volver después
+
+**Tracking de experimentos:**
+- `results.tsv` — runs cuantitativos del evaluador (accuracy numérica)
+- `research/notes/` — hallazgos, dead ends, ideas, exploraciones
+- `research/synthesis/` — conclusiones consolidadas con evidencia
+- `TODO.md` — qué se hizo, qué falta
+
+**Manejo del contexto:**
+- Documentar hallazgos a archivos INMEDIATAMENTE, no dejarlos solo en memoria
+- Commitear frecuentemente — cada hallazgo significativo = commit
+- Cada tanto, compactar: releer lo acumulado, limpiar notas redundantes
+- El output principal de autoresearch es CONOCIMIENTO documentado en archivos
 
 ## Mindset de investigación — SER CREATIVO
 
@@ -36,32 +68,11 @@ No estamos haciendo ingeniería incremental. Estamos INVESTIGANDO. Eso significa
 - **No tener miedo de probar cosas locas.** Si una idea suena interesante,
   prototipala. Es más barato experimentar que debatir.
 - **Profundizar, no surfear.** Mejor investigar UN approach a fondo que 5
-  superficialmente.
+  superficialmente. Pero si algo no va, pivotar sin culpa.
 - **Usar Codex (MCP) como sparring partner.** Debatir ideas, pedir code review,
   desafiar conclusiones.
 - **Documentar TODO.** Cada hallazgo, cada dead end, cada insight va a
-  docs/RESEARCH.md. El output principal de autoresearch es CONOCIMIENTO documentado.
-
-## Manejo de contexto y reinicios
-
-El watcher (`watch.sh`) relanza Claude Code cuando se cae o se queda sin
-contexto. Cada restart es un Claude nuevo que reconstruye estado desde archivos:
-
-1. Lee CLAUDE.md (este archivo) → entiende cómo trabajar
-2. Lee TODO.md → ve qué está pendiente
-3. Lee docs/RESEARCH.md → ve qué se investigó
-4. Lee git log → ve qué se hizo recientemente
-5. Continúa desde donde quedó
-
-**Reglas para sobrevivir reinicios:**
-- **Commitear frecuentemente.** Cada hallazgo significativo = commit. Así el
-  próximo Claude ve el progreso en git log.
-- **Documentar en docs/RESEARCH.md ANTES de que se llene el contexto.** Si
-  descubriste algo, escribilo al archivo inmediatamente. No lo dejes solo en
-  la conversación.
-- **TODO.md como checkpoint.** Marcar tareas completadas y agregar las nuevas
-  que surjan. El próximo Claude lee esto para saber dónde retomar.
-- **No depender de la memoria conversacional.** Todo lo importante va a archivos.
+  `research/`. El output principal de autoresearch es CONOCIMIENTO documentado.
 
 ## Environment setup
 
@@ -111,8 +122,10 @@ eq-distill/
 ├── optim/                  # Estrategias de optimización
 │   ├── evolutionary.py     # Approach evolutivo
 │   └── analysis_based.py   # Heurísticas desde análisis
-├── docs/
-│   └── RESEARCH.md         # Investigación y hallazgos
+├── research/
+│   ├── README.md           # Índice de investigación
+│   ├── notes/              # Exploraciones, análisis, ideas
+│   └── synthesis/          # Conclusiones consolidadas
 └── .claude/skills/         # Skills de Claude Code
 ```
 
@@ -166,7 +179,8 @@ python -c "import os; s=os.path.getsize('cheatsheets/current.txt'); print(f'{s} 
 | Agregué dependencia | `pyproject.toml` Y `CLAUDE.md` tech stack |
 | Cambié convención | `CLAUDE.md` actualizar |
 | Cambió el scope/visión | `PROJECT.md` primero, propagar a `CLAUDE.md` y `TODO.md` |
-| Nuevos hallazgos de investigación | `docs/RESEARCH.md` |
+| Nueva exploración/debate | `research/notes/` + actualizar `research/README.md` |
+| Conclusión consolidada | `research/synthesis/` + actualizar `research/README.md` |
 
 ## Git conventions
 

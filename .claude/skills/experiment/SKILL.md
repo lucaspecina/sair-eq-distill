@@ -7,7 +7,7 @@ disable-model-invocation: true
 # Experiment — Cheatsheet Optimization Loop
 
 This is ONE approach (hill-climbing / Karpathy loop) for improving the cheatsheet.
-It is NOT the only approach — see docs/RESEARCH.md for other tracks.
+It is NOT the only approach — see research/notes/ for other tracks.
 
 ## Prerequisites
 - `eval/evaluate.py` must exist and work
