@@ -66,10 +66,25 @@ Reasoning models need space to think. Many "failures" were just truncations.
 Phi-4 is not in SAIR's 25-model benchmark and is too weak for the task.
 Evaluating against gpt-5-nano + gpt-5-mini only.
 
+## BREAKTHROUGH: Less is More
+
+v6 (2.7KB, focused on substitution) achieved **100% on 15 problems**
+while v5 (6.3KB, comprehensive) only got 73%.
+
+The key insight: **conciseness and focus beat comprehensiveness.**
+The model works better with a SHORT, CLEAR decision procedure focused
+on the #1 technique (substitution) than with a long reference document.
+
+This suggests the cheatsheet should be:
+- Under 3KB (leave room for model to think)
+- Focused on 2-3 key techniques, not 10
+- Procedural (step by step), not encyclopedic
+- Include specific "don't do this" warnings
+
 ## Approaches to Try Next
-1. **OpenEvolve for prompt optimization** — prototype ready, needs cascade eval
-2. **Few-shot examples** in cheatsheet (concrete derivation examples)
-3. **Modular cheatsheet** with ablation testing
-4. **Teach model to simulate 2-element magmas** for counterexamples
-5. **Duality rule**: if A→B then dual(A)→dual(B)
-6. **Static quality scorer** for fast evolutionary iteration
+1. **Confirm v6 on larger sample** (30+ problems) — pending
+2. **Test v6 on hard problems** — pending
+3. **Test v6 on gpt-5-nano** — pending
+4. **OpenEvolve** to evolve v6 further — promising now that we have a good starting point
+5. **Modular cheatsheet**: evolve each section independently
+6. **Ablation study**: remove sections one by one to find most valuable parts
