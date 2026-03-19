@@ -25,6 +25,44 @@ revisa resultados, da dirección, y relanza.
 - Los hallazgos se documentan en `docs/RESEARCH.md`
 - El progreso se trackea en `TODO.md` y `CHANGELOG.md`
 
+## Mindset de investigación — SER CREATIVO
+
+No estamos haciendo ingeniería incremental. Estamos INVESTIGANDO. Eso significa:
+
+- **Buscar isomorfismos.** ¿Qué otros problemas se parecen a este? ¿Cómo los
+  resuelven? Compresión de información, knowledge distillation, prompt optimization,
+  evolutionary search, information theory, graph compression... ¿qué ideas de
+  otros campos aplican acá?
+- **No tener miedo de probar cosas locas.** Si una idea suena interesante,
+  prototipala. Es más barato experimentar que debatir.
+- **Profundizar, no surfear.** Mejor investigar UN approach a fondo que 5
+  superficialmente.
+- **Usar Codex (MCP) como sparring partner.** Debatir ideas, pedir code review,
+  desafiar conclusiones.
+- **Documentar TODO.** Cada hallazgo, cada dead end, cada insight va a
+  docs/RESEARCH.md. El output principal de autoresearch es CONOCIMIENTO documentado.
+
+## Manejo de contexto y reinicios
+
+El watcher (`watch.sh`) relanza Claude Code cuando se cae o se queda sin
+contexto. Cada restart es un Claude nuevo que reconstruye estado desde archivos:
+
+1. Lee CLAUDE.md (este archivo) → entiende cómo trabajar
+2. Lee TODO.md → ve qué está pendiente
+3. Lee docs/RESEARCH.md → ve qué se investigó
+4. Lee git log → ve qué se hizo recientemente
+5. Continúa desde donde quedó
+
+**Reglas para sobrevivir reinicios:**
+- **Commitear frecuentemente.** Cada hallazgo significativo = commit. Así el
+  próximo Claude ve el progreso en git log.
+- **Documentar en docs/RESEARCH.md ANTES de que se llene el contexto.** Si
+  descubriste algo, escribilo al archivo inmediatamente. No lo dejes solo en
+  la conversación.
+- **TODO.md como checkpoint.** Marcar tareas completadas y agregar las nuevas
+  que surjan. El próximo Claude lee esto para saber dónde retomar.
+- **No depender de la memoria conversacional.** Todo lo importante va a archivos.
+
 ## Environment setup
 
 ```bash
