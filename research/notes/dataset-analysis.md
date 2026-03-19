@@ -190,8 +190,29 @@ Phi-4 is NOT in SAIR's 25-model benchmark. The weakest models there are:
 
 We should consider dropping Phi-4 from our eval or weighting it less.
 
+## 2-Element Magma Analysis
+
+All 16 possible 2-element magmas ({0,1}):
+
+| Magma | Satisfies | Description |
+|-------|-----------|-------------|
+| 0000 | 1556 (33%) | Constant: x*y=0 always |
+| 1111 | 1556 (33%) | Constant: x*y=1 always |
+| 0011 | 1214 (26%) | Right projection: x*y=y |
+| 0101 | 1214 (26%) | Left projection: x*y=x |
+| 0110 | 663 (14%) | XOR-like |
+| 1001 | 663 (14%) | XNOR-like |
+| 0001 | 164 (3.5%) | Good for counterexamples |
+| 1000 | 138 (2.9%) | Best counterexample magma |
+
+Constant magmas (0000, 1111) satisfy the same 1556 equations = the x=y equiv class.
+Left/right projections satisfy 1214 equations each.
+
+For counterexamples: magmas 0001 and 1000 satisfy very few equations — if
+either satisfies Eq1 but not Eq2, that's a quick FALSE proof.
+
 ## Open questions
-- [ ] What makes hard problems hard? (answered above: similar satisfaction scores)
-- [ ] Should we drop Phi-4 from evaluation?
 - [ ] Can few-shot examples in cheatsheet help more than rules?
 - [ ] What's the optimal balance of rules vs examples in 10KB?
+- [ ] Should we include specific magma tables in the cheatsheet?
+- [ ] Can OpenEvolve be used to evolve the cheatsheet text?
