@@ -81,10 +81,32 @@ This suggests the cheatsheet should be:
 - Procedural (step by step), not encyclopedic
 - Include specific "don't do this" warnings
 
+## Cheatsheet Results Summary
+
+| Version | Size | gpt-5-mini (normal) | Key Change |
+|---------|------|---------------------|------------|
+| v0 baseline | 1.7KB | 72% (n=50) | Generic rules |
+| v1 data-driven | 3.1KB | 80% (n=50) | DAG/satisfaction heuristics |
+| v2 procedural | 3.6KB | ~70% (n=30) | Step-by-step procedures |
+| v4 hybrid | 3.3KB | 80% (n=15) | Best of v1+v2 |
+| v5 distilled | 6.3KB | 73% (n=15) | GPT-5.3 generated, too verbose |
+| **v6 focused** | **2.7KB** | **96.7% (n=30)** | **Focused on substitution** |
+
+### The #1 lesson: LESS IS MORE
+v6 (2.7KB, focused) massively outperforms v5 (6.3KB, comprehensive).
+The model works better with SHORT, CLEAR instructions focused on the
+#1 technique (substitution) than with comprehensive reference material.
+
+### What makes v6 work:
+1. Substitution technique as THE central focus
+2. Explicit "don't do this" warnings against premature FALSE
+3. Concise format — model doesn't get lost
+4. Quick checks first, deep reasoning second
+5. 2.7KB leaves lots of room for model's own reasoning
+
 ## Approaches to Try Next
-1. **Confirm v6 on larger sample** (30+ problems) — pending
-2. **Test v6 on hard problems** — pending
-3. **Test v6 on gpt-5-nano** — pending
-4. **OpenEvolve** to evolve v6 further — promising now that we have a good starting point
-5. **Modular cheatsheet**: evolve each section independently
-6. **Ablation study**: remove sections one by one to find most valuable parts
+1. **Test v6 on hard problems** — couldn't complete due to API timeouts
+2. **Test with gpt-5-nano** — needs 32K+ tokens (reasoning model)
+3. **Ablation study**: which part of v6 contributes most?
+4. **OpenEvolve** to optimize v6 further
+5. **Try v6 on SAIR playground** — ultimate validation (10 credits/day)
