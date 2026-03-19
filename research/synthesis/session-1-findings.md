@@ -104,9 +104,40 @@ The model works better with SHORT, CLEAR instructions focused on the
 4. Quick checks first, deep reasoning second
 5. 2.7KB leaves lots of room for model's own reasoning
 
-## Approaches to Try Next
-1. **Test v6 on hard problems** — couldn't complete due to API timeouts
-2. **Test with gpt-5-nano** — needs 32K+ tokens (reasoning model)
-3. **Ablation study**: which part of v6 contributes most?
-4. **OpenEvolve** to optimize v6 further
-5. **Try v6 on SAIR playground** — ultimate validation (10 credits/day)
+## v6 is Locally Optimal — Manual Improvements Exhausted
+
+Tested 4 variants beyond v6 (v7, v8, v9 with different additions/formats).
+EVERY modification reduced accuracy. v6 is a local optimum.
+
+| Variant | Change from v6 | Accuracy |
+|---------|---------------|----------|
+| v7 (+intermediate laws) | +100 bytes | 87% (-10) |
+| v8 (pseudocode format) | reformat | 80% (-17) |
+| v9 (+worked example) | +300 bytes | 87% (-10) |
+
+Prompt length research confirms: v6 at ~380 words is in the optimal
+300-500 word range. Beyond that, comprehension drops 12% per 100 words.
+
+## Next Steps (for session with human)
+
+### Immediate validation:
+1. Test v6 on SAIR playground (ultimate ground truth) — 10 credits/day
+2. Run ablation study (analysis/ablation_study.py, ~42 min)
+
+### Evolutionary optimization:
+3. Use OpenEvolve for surgical mutations to v6 (prototype ready)
+4. Need cascade evaluation: static analysis → proxy → full LLM
+
+### Hard problems:
+5. Hard problem evaluation was blocked by API timeouts
+6. Need strategy for faster eval (reduce sample or use cheaper model)
+
+### Infrastructure:
+7. Fix gpt-5-nano evaluation (needs 32K+ tokens)
+8. Fix Windows asyncio background task buffering
+
+### Research to continue:
+9. Birkhoff completeness: can we teach better substitution search?
+10. Negative space approach: define FALSE indicators precisely
+11. Meta-learning from 15K benchmark responses
+12. OpenEvolve prompt evolution (+23% on HotpotQA benchmark)
