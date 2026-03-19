@@ -1,67 +1,80 @@
 # Equational Implication Solver
 
-Determine if Equation 1 implies Equation 2 over all magmas (sets with binary operation *).
-"Eq1 implies Eq2" = every magma satisfying Eq1 must also satisfy Eq2.
+Determine if Equation 1 (Eq1) implies Equation 2 (Eq2) over all magmas.
+"Eq1 implies Eq2" means every magma satisfying Eq1 must also satisfy Eq2.
+A magma is a set with a binary operation *.
 
-## KEY FACTS
-- About 37% of pairs are TRUE, 63% FALSE. When uncertain, lean FALSE.
-- Implication is transitive: if A→B and B→C then A→C.
-- Equations with MORE distinct variables are generally STRONGER (imply more).
-- Variables on the RHS not appearing on LHS = "free variables" = MORE restrictive.
+## IMPORTANT STATISTICS
+- 37% of all pairs are TRUE implications, 63% are FALSE.
+- When genuinely uncertain after analysis, answer FALSE.
 
-## PROCEDURE
+## STEP-BY-STEP PROCEDURE
 
-### Step 1: Quick checks
-- Equations identical? → TRUE
+### 1. TRIVIAL CASES (check first)
+- Equations identical or equivalent? → TRUE
 - Eq2 is "x = x"? → TRUE (tautology, everything implies it)
-- Eq1 has form forcing all elements equal? → TRUE (implies everything)
+- Eq1 can derive x = y for arbitrary x,y? → TRUE (implies everything)
 
-### Step 2: Does Eq1 force a trivial operation?
-Many equations force the operation to be projection (x*y = y or x*y = x) or constant.
-If so, check if Eq2 holds for that operation.
+### 2. VARIABLE ANALYSIS (strongest quick signal)
+Count distinct variables in each equation. Count "free" RHS variables
+(variables appearing on the right side but NOT the left side).
 
-KEY TECHNIQUE: Find a "left identity" element e (where e*x = x for all x).
-If Eq1 lets you construct such an e for ANY starting elements, then Eq1 forces
-x*y = y (right projection), and nearly all equations follow. Answer TRUE.
+Key rules:
+- If Eq1 has MORE total variables than Eq2 → strong lean TRUE
+- If Eq1 has MORE free RHS variables than Eq2 → strong lean TRUE
+- If Eq2 has more variables than Eq1 → strong lean FALSE
+- If Eq2 introduces new universal quantifiers (like extra z,w that
+  could be anything) not constrained by Eq1 → very likely FALSE
 
-Example proof: If Eq1 is "x = ((y*y)*z)*x", fix y0,z0 and set e = (y0*y0)*z0.
-Then e*x = x for all x, so e is a left identity. Substituting y=e in Eq1 and
-simplifying shows x*y = y for all x,y. Then Eq2 follows trivially.
+### 3. DOES EQ1 FORCE A TRIVIAL OPERATION?
+Many TRUE implications work because Eq1 forces the operation into a
+very restricted form. Check if Eq1 forces:
 
-### Step 3: Try variable substitution
-Can you instantiate Eq1's variables to derive Eq2?
-- Look at Eq2's terms and try to "find" them inside Eq1's structure.
-- You may need to apply Eq1 multiple times with different substitutions.
-- If substitution works → TRUE.
+a) CONSTANT OPERATION: x*y = c for all x,y.
+   Happens when Eq1 has form "x*y = z*w" (no shared vars between sides).
+   If constant → almost everything follows → TRUE.
 
-### Step 4: Compare variable structure
-- If Eq1 has more total variables than Eq2 → leans TRUE.
-- If Eq2 has variables not constrained by Eq1 → leans FALSE.
-- Eq2 with extra "free" universal quantifiers (like z,w that could be anything)
-  is very hard to satisfy → likely FALSE unless Eq1 forces constant operation.
+b) RIGHT PROJECTION: x*y = y for all x,y.
+   KEY TECHNIQUE: If you can find an element e with e*x = x for all x
+   (left identity), and show ALL elements are such left identities,
+   then x*y = y. Most equations follow → TRUE.
 
-### Step 5: Try counterexample with 2-element magma
-Check the magma {0,1} with these operation tables:
-- x*y = 0 always (table: 00/00) — satisfies "constant" equations
-- x*y = y (table: 01/01) — right projection, satisfies many equations
-- x*y = x (table: 00/11) — left projection
-- Table 01/10: x*y = 1-x (interesting edge cases)
+   How to find left identity: substitute specific values in Eq1 to
+   isolate a product that acts as identity.
+   Example: From "x = ((y*y)*z)*x", set e = (y0*y0)*z0, get e*x = x.
 
-For each: does it satisfy Eq1? If yes, does it satisfy Eq2?
-If you find one satisfying Eq1 but not Eq2 → FALSE.
+c) LEFT PROJECTION: x*y = x for all x,y.
+   Similar technique but for right identities.
 
-### Step 6: Default
-If none of the above resolved it → FALSE (63% base rate).
+d) ONE-ELEMENT MAGMA: all elements are equal.
+   If Eq1 has enough free variables to derive x = y → TRUE for all.
 
-## COMMON PATTERNS
+### 4. SUBSTITUTION TEST
+Try to derive Eq2 from Eq1 by substituting variables with terms:
+- Look at Eq2's structure
+- Try replacing variables in Eq1 to match Eq2
+- May need to apply Eq1 multiple times with different substitutions
+- If successful → TRUE
 
-### Always TRUE:
-- Eq1 forces one-element magma (all elements equal) → implies everything
-- Eq1 forces constant operation → implies most things
-- Eq1 forces right/left projection → check if Eq2 holds for that projection
-- Eq2 obtainable from Eq1 by substituting variables with terms
+### 5. COUNTEREXAMPLE CHECK
+If none of the above proves TRUE, try to disprove with small magmas.
 
-### Almost always FALSE:
-- Eq2 has more free variables than Eq1
-- Eq2 introduces different nesting structure not derivable from Eq1
-- Eq1 is "weak" (many magmas satisfy it) but Eq2 is "strong" (few satisfy it)
+Most useful 2-element magmas {0,1} (written as operation tables 0*0,0*1,1*0,1*1):
+- 0,0,0,0 (constant zero): satisfies equations forcing constants
+- 0,1,0,1 (right projection x*y=y): satisfies many equations
+- 0,0,1,1 (left projection x*y=x): satisfies many equations
+- 0,1,1,0 (swap/XOR): good discriminator for hard cases
+
+Check: does the magma satisfy Eq1? If yes, does it also satisfy Eq2?
+If it satisfies Eq1 but NOT Eq2 → FALSE.
+
+### 6. STRUCTURAL REASONING
+- Similar nesting patterns between Eq1 and Eq2 → lean TRUE
+- Eq2 has fundamentally different structure from Eq1 → lean FALSE
+- Eq1 is "weak" (satisfied by many magmas) and Eq2 is "strong" → lean FALSE
+- Eq1 is "strong" (restrictive) and Eq2 is "weak" → lean TRUE
+
+### 7. DEFAULT: FALSE
+If no clear signal either way, answer FALSE (63% base rate).
+The most common error is saying FALSE when TRUE (missing the proof),
+so spend extra time on Step 3 and Step 4 before defaulting.
