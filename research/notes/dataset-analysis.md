@@ -80,9 +80,66 @@ implication DAG?" This connects to:
 3. **Chain decomposition / antichain structure**: Dilworth's theorem — what's
    the minimum number of chains that cover the partial order?
 
+## Quotient DAG Structure
+
+The quotient DAG (equivalence classes with edges from transitive reduction):
+
+- **1415 nodes** (equivalence classes)
+- **4824 edges** (transitive reduction from 28442 full DAG edges)
+- **1 source**: x = y (class of size 1496 — the strongest equations)
+- **1 sink**: x = x (the tautology — the weakest equation)
+- **Height: 15** — only 15 levels from top to bottom
+
+### Width by level (diamond shape):
+```
+Level  0:    1 (x = y, the source)
+Level  1:   46
+Level  2:   64
+Level  3:  131
+Level  4:  268  ← widest
+Level  5:  269  ← widest
+Level  6:  167
+Level  7:  202
+Level  8:  155
+Level  9:   58
+Level 10:   15
+Level 11:   17
+Level 12:   10
+Level 13:    7
+Level 14:    4
+Level 15:    1 (x = x, the sink)
+```
+
+### Degree stats:
+- Out-degree: min=0, max=46, mean=3.4, median=3
+- In-degree: min=0, max=57, mean=3.4, median=2
+
+### Implications for the cheatsheet:
+This is a very structured DAG. If we can teach the model:
+1. How to identify which equivalence class an equation belongs to
+2. The partial order relationship between classes
+Then the model can deduce any implication by checking reachability.
+
+The challenge: 1415 classes × 4824 edges is too much to enumerate in 10KB.
+We need RULES that describe the DAG, not the DAG itself.
+
+## Substitution Analysis
+
+Testing if "B is a substitution instance of A" predicts "A implies B":
+
+| Dataset | Detected | Precision | Coverage |
+|---------|----------|-----------|----------|
+| normal | 68/1000 | 86.8% | 6.8% |
+| hard1 | 6/69 | 16.7% | 8.7% |
+
+Substitution is a valid rule (87% precision on normal) but:
+- Very low coverage (only 6.8% of problems)
+- Almost useless on hard problems (17% precision)
+- Hard problems require deeper reasoning than syntactic matching
+
 ## Open questions for next analysis
-- [ ] What does the quotient DAG (1415 nodes) look like?
-- [ ] Can we identify features that predict reachability in the DAG?
-- [ ] What's the relationship between equation syntax and position in the DAG?
-- [ ] Can we describe the partial order with rules rather than enumeration?
-- [ ] What percentage of problems can a simple "syntactic substitution" rule solve?
+- [ ] What features predict DAG level? (variable count, depth, structure?)
+- [ ] Can we cluster classes by syntactic properties?
+- [ ] What's the relationship between equivalence class size and DAG level?
+- [ ] Can a small number of rules describe most of the 4824 edges?
+- [ ] What do the hard problems look like in the DAG? (close nodes? far apart?)
