@@ -14,6 +14,13 @@
 | Magma simulation idea | [notes/magma-simulation-idea.md](notes/magma-simulation-idea.md) | Concept documented |
 | Reasoning patterns quantified | [notes/reasoning-patterns-quantified.md](notes/reasoning-patterns-quantified.md) | Correct vs wrong patterns analyzed |
 | Birkhoff completeness | [notes/birkhoff-completeness.md](notes/birkhoff-completeness.md) | Substitution is theoretically COMPLETE |
+| Hard problem strategy | [notes/hard-problem-strategy.md](notes/hard-problem-strategy.md) | 60% on hard, normal is 5x more impactful |
+| Model bias analysis | [notes/model-bias-analysis.md](notes/model-bias-analysis.md) | Opposite biases: mini=TRUE, nano=FALSE |
+| Prompt length research | [notes/prompt-length-research.md](notes/prompt-length-research.md) | v6 at 380 words = optimal sweet spot |
+| Creative approaches | [notes/creative-approaches.md](notes/creative-approaches.md) | 6 novel ideas to explore |
+| Term rewriting | [notes/term-rewriting-connection.md](notes/term-rewriting-connection.md) | v6 IS an informal TRS |
+| Machine teaching | [notes/machine-teaching.md](notes/machine-teaching.md) | Problem maps to optimal teaching theory |
+| Latent space encoding | [notes/latent-space-encoding.md](notes/latent-space-encoding.md) | PCA dimensions describable in text |
 | Isomorphisms with other fields | [notes/isomorphisms.md](notes/isomorphisms.md) | 4 isomorphisms identified |
 
 ## Reading order
