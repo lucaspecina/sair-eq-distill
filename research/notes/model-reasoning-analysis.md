@@ -43,3 +43,31 @@ The cheatsheet should focus on TEACHING THE MODEL HOW TO PROVE TRUE implications
 
 This suggests our cheatsheet should GUIDE the reasoning process, not just
 provide facts. The model needs a PROCEDURE to follow.
+
+## Best vs Worst Model Comparison (hard problems, default reasoning)
+
+Gemini 3.1 Pro: 90.2% accuracy (best)
+Llama 3.1 8B: 46.7% accuracy (worst)
+
+48 problems only the best model gets right.
+
+### What the best model does:
+- Constructs SPECIFIC counterexamples (e.g., "Steiner loops")
+- Detects right projection reliably
+- Shows concrete algebraic steps
+
+### What the worst model does WRONG:
+- **Assumes associativity** — magmas are NOT associative!
+- Uses "Knuth-Bendix" as buzzword without execution
+- Claims "equational reasoning" vaguely without steps
+- Says TRUE with weak justification
+
+### CRITICAL INSIGHT:
+Small models often ASSUME ASSOCIATIVITY in magmas (because they're trained
+on group/ring theory where associativity holds). This leads to wrong proofs.
+
+**Possible cheatsheet improvement**: add warning "magmas are NOT associative
+or commutative — do not assume (x*y)*z = x*(y*z) unless derived from Eq1."
+
+But adding content to v6 hurts accuracy... Could REPLACE a less valuable
+section with this warning? Would need ablation to determine.
