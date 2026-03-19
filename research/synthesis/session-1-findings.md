@@ -91,6 +91,13 @@ This suggests the cheatsheet should be:
 | v4 hybrid | 3.3KB | 80% (n=15) | Best of v1+v2 |
 | v5 distilled | 6.3KB | 73% (n=15) | GPT-5.3 generated, too verbose |
 | **v6 focused** | **2.7KB** | **96.7% (n=30)** | **Focused on substitution** |
+| v7 +intermediates | 2.8KB | 87% (n=15) | Added intermediate laws |
+| v8 pseudocode | 2.3KB | 80% (n=10) | Pseudocode format |
+| v9 +example | 3.0KB | 87% (n=15) | Added worked example |
+| v10 calibrated | 2.2KB | 80% (n=15) | Calibration-focused |
+
+**v6 on hard2 (gpt-5-mini):** 60% (confirmed across 2 runs).
+**gpt-5-nano:** 40-50% even with 32K tokens — too weak for this task.
 
 ### The #1 lesson: LESS IS MORE
 v6 (2.7KB, focused) massively outperforms v5 (6.3KB, comprehensive).
