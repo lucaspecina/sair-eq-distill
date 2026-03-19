@@ -169,8 +169,29 @@ The cheatsheet needs TWO strategies:
 
 Satisfaction score as sole predictor: 70.4% on normal, 55.5% on hard2.
 
+## Cheatsheet Evaluation Results
+
+### Baseline cheatsheet (v0, generic rules, 1.7KB):
+- gpt-5-nano: 64.0% | gpt-5-mini: 72.0% | Phi-4: 16.0% | **avg: 50.7%**
+
+### Data-driven cheatsheet (v1, with DAG/vars heuristics, 3.1KB):
+- gpt-5-nano: 63.3% | gpt-5-mini: **80.0%** | Phi-4: 3.3% | **avg: 48.9%**
+
+### KEY INSIGHT: Detailed rules help capable models but HURT weak ones
+- gpt-5-mini improved from 72% → 80% with more detailed rules
+- Phi-4 collapsed from 16% → 3.3% — too weak to follow complex instructions
+- The cheatsheet must be simple enough for weak models but informative for strong ones
+
+### Model inclusion decision:
+Phi-4 is NOT in SAIR's 25-model benchmark. The weakest models there are:
+- Llama 3.1 8B: 36-52%
+- GPT-5 Nano: 60-77%
+- Claude Haiku 4.5: 47-62%
+
+We should consider dropping Phi-4 from our eval or weighting it less.
+
 ## Open questions
-- [ ] What makes hard problems hard? Analyze the specific structure
-- [ ] Can we teach the model algebraic reasoning for hard problems?
-- [ ] What's the scoring weight of hard vs normal in the competition?
-- [ ] Should we optimize for normal (bigger impact) or hard (harder ceiling)?
+- [ ] What makes hard problems hard? (answered above: similar satisfaction scores)
+- [ ] Should we drop Phi-4 from evaluation?
+- [ ] Can few-shot examples in cheatsheet help more than rules?
+- [ ] What's the optimal balance of rules vs examples in 10KB?
