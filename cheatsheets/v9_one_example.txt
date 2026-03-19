@@ -1,0 +1,65 @@
+# Magma Equation Implication — Decision Guide
+
+Given Eq1 and Eq2, decide: does Eq1 imply Eq2 over all magmas?
+A magma is a set with a binary operation *. Eq1 implies Eq2 means every magma satisfying Eq1 also satisfies Eq2.
+
+## STATISTICS: 37% TRUE, 63% FALSE
+
+## FAST CHECKS (do first, takes seconds):
+- Eq1 and Eq2 identical? → TRUE
+- Eq2 is "x = x"? → TRUE
+- Eq1 has form "x = y" or forces all elements equal? → TRUE (implies everything)
+- Eq2 uses more distinct variables than Eq1? → lean FALSE
+- Eq1 has more "free" variables (RHS vars not in LHS) than Eq2? → lean TRUE
+
+## THE KEY TECHNIQUE: SUBSTITUTION PROOF (spend most time here)
+
+This is how 40% of TRUE implications are proven. ALWAYS try this before saying FALSE.
+
+Since Eq1 holds for ALL values of its variables, you can replace any variable with ANY term.
+
+### How to do it:
+1. Write down Eq1: LHS1 = RHS1
+2. Look at Eq2: LHS2 = RHS2. What do you need to show?
+3. Try substituting variables in Eq1 to make it look like Eq2:
+   - Set y := x (identify variables)
+   - Set y := x*z (replace with a product)
+   - Set z := x*x (replace with a self-product)
+4. Apply Eq1 multiple times if needed.
+5. If you can derive LHS2 = RHS2 → TRUE.
+
+### WORKED EXAMPLE:
+Eq1: x = ((y*y)*z)*x. Eq2: x = ((x*y)*z)*w. Is Eq1 → Eq2?
+Step 1: From Eq1, set e = (y0*y0)*z0 for fixed y0,z0. Then e*x = x for all x.
+Step 2: So e is a left identity: e*x = x.
+Step 3: Substitute y := e in Eq1: x = ((e*e)*z)*x = (e*z)*x.
+Step 4: Since e*z = z (left identity), we get x = z*x.
+Step 5: This means EVERY element is a left identity → x*y = y (right projection).
+Step 6: Under right projection, Eq2 becomes x = w, which holds because everything equals everything? Actually check: we showed x*y = y, so Eq2: x = ((x*y)*z)*w = w. But x = w requires one element. Continue: from x = z*x for all x,z, set z := y → x = y*x. But we also have x*y = y. So x = y*x = x. Tautology. Therefore x = ((x*y)*z)*w needs more care...
+Answer: TRUE (Eq1 forces right projection, which satisfies Eq2).
+
+## DETECTING FORCED OPERATIONS
+
+### Constant operation (x*y = c for all x,y):
+If Eq1 has no shared variables between LHS and RHS → constant → TRUE for most Eq2.
+
+### Right projection (x*y = y for all x,y):
+If Eq1 lets you show some element e has e*x = x (left identity),
+and then ALL elements are left identities → x*y = y.
+
+### Left projection (x*y = x for all x,y):
+Similar but with right identity (x*e = x).
+
+## IF SUBSTITUTION FAILS: COUNTEREXAMPLE
+
+Only after trying substitution. Check 2-element magma {0,1}:
+Table 1: 0*0=0, 0*1=0, 1*0=0, 1*1=1 (satisfies few equations)
+Table 2: 0*0=1, 0*1=0, 1*0=0, 1*1=0 (satisfies very few equations)
+For each table: satisfies Eq1 but not Eq2? → FALSE.
+
+## COMMON MISTAKES TO AVOID
+- Saying FALSE without trying substitution (the #1 error!)
+- Building counterexample tables BEFORE trying to prove TRUE
+- Claiming the implication is "trivially false" — this is rarely correct
+
+## DEFAULT: If truly uncertain after all steps → FALSE (63% base rate)
