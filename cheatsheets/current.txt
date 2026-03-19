@@ -1,85 +1,67 @@
-# Equational Implication Solver — Step-by-Step Guide
+# Equational Implication Solver
 
-You must determine if Equation 1 implies Equation 2 over all magmas (sets with binary operation *).
-"Eq1 implies Eq2" means: every magma satisfying Eq1 must also satisfy Eq2.
+Determine if Equation 1 implies Equation 2 over all magmas (sets with binary operation *).
+"Eq1 implies Eq2" = every magma satisfying Eq1 must also satisfy Eq2.
 
-## STEP 1: Check trivial cases (takes 5 seconds)
+## KEY FACTS
+- About 37% of pairs are TRUE, 63% FALSE. When uncertain, lean FALSE.
+- Implication is transitive: if A→B and B→C then A→C.
+- Equations with MORE distinct variables are generally STRONGER (imply more).
+- Variables on the RHS not appearing on LHS = "free variables" = MORE restrictive.
 
-- If the equations are identical → TRUE
-- If Eq2 is "x = x" → TRUE (tautology, implied by everything)
-- If Eq1 is of the form that forces all elements equal (see Step 3) → TRUE
+## PROCEDURE
 
-## STEP 2: Count variables and structure (takes 10 seconds)
+### Step 1: Quick checks
+- Equations identical? → TRUE
+- Eq2 is "x = x"? → TRUE (tautology, everything implies it)
+- Eq1 has form forcing all elements equal? → TRUE (implies everything)
 
-Count distinct variables on each side of each equation.
-Key signals:
-- If Eq1 has MORE total variables than Eq2 → leans TRUE
-- If Eq2 has more variables than Eq1 → leans FALSE
-- If Eq2 has variables on the RHS not appearing in its LHS that Eq1 does NOT have in corresponding positions → strong lean FALSE
-- "Free variables" in the RHS (vars not in LHS) make an equation STRONGER (more restrictive)
+### Step 2: Does Eq1 force a trivial operation?
+Many equations force the operation to be projection (x*y = y or x*y = x) or constant.
+If so, check if Eq2 holds for that operation.
 
-IMPORTANT: About 37% of all pairs are TRUE, 63% are FALSE.
+KEY TECHNIQUE: Find a "left identity" element e (where e*x = x for all x).
+If Eq1 lets you construct such an e for ANY starting elements, then Eq1 forces
+x*y = y (right projection), and nearly all equations follow. Answer TRUE.
 
-## STEP 3: Try to prove TRUE by substitution
+Example proof: If Eq1 is "x = ((y*y)*z)*x", fix y0,z0 and set e = (y0*y0)*z0.
+Then e*x = x for all x, so e is a left identity. Substituting y=e in Eq1 and
+simplifying shows x*y = y for all x,y. Then Eq2 follows trivially.
 
-This is the MOST IMPORTANT step for proving TRUE implications.
+### Step 3: Try variable substitution
+Can you instantiate Eq1's variables to derive Eq2?
+- Look at Eq2's terms and try to "find" them inside Eq1's structure.
+- You may need to apply Eq1 multiple times with different substitutions.
+- If substitution works → TRUE.
 
-Given Eq1: LHS1 = RHS1, try to derive Eq2: LHS2 = RHS2.
+### Step 4: Compare variable structure
+- If Eq1 has more total variables than Eq2 → leans TRUE.
+- If Eq2 has variables not constrained by Eq1 → leans FALSE.
+- Eq2 with extra "free" universal quantifiers (like z,w that could be anything)
+  is very hard to satisfy → likely FALSE unless Eq1 forces constant operation.
 
-TECHNIQUE: substitute variables in Eq1 with terms to obtain useful identities.
-Example: If Eq1 is "x = x * (((y * z) * w) * u)" and Eq2 is "x = ((x * x) * (x * y)) * y":
-  - In Eq1, set y:=x, z:=x, w:=(x*y), u:=y
-  - Then RHS1 becomes x * (((x*x)*(x*y))*y)
-  - So x = x * (((x*x)*(x*y))*y) for all x,y
-  - Apply Eq1 again to simplify → eventually derive Eq2
+### Step 5: Try counterexample with 2-element magma
+Check the magma {0,1} with these operation tables:
+- x*y = 0 always (table: 00/00) — satisfies "constant" equations
+- x*y = y (table: 01/01) — right projection, satisfies many equations
+- x*y = x (table: 00/11) — left projection
+- Table 01/10: x*y = 1-x (interesting edge cases)
 
-General approach:
-1. Look at LHS2 and RHS2 of Eq2
-2. Try to "see" the terms of Eq2 inside Eq1's structure
-3. Substitute variables in Eq1 to match
-4. May need to apply Eq1 multiple times
+For each: does it satisfy Eq1? If yes, does it satisfy Eq2?
+If you find one satisfying Eq1 but not Eq2 → FALSE.
 
-## STEP 4: Check if Eq1 forces a constant or trivial operation
+### Step 6: Default
+If none of the above resolved it → FALSE (63% base rate).
 
-Some equations force the magma operation to be very constrained:
+## COMMON PATTERNS
 
-A) "x * y = z * w" → operation is CONSTANT (same output for all inputs)
-   A constant magma satisfies almost every equation → likely TRUE
+### Always TRUE:
+- Eq1 forces one-element magma (all elements equal) → implies everything
+- Eq1 forces constant operation → implies most things
+- Eq1 forces right/left projection → check if Eq2 holds for that projection
+- Eq2 obtainable from Eq1 by substituting variables with terms
 
-B) Equations where you can derive x = y for arbitrary x, y → forces ONE element
-   These are equivalent to "x = y" and imply EVERYTHING → TRUE
-   Signs: the equation has "free" variables that let you equate anything
-
-C) "x * y = x" or "x * y = y" → left/right projection
-   Very restrictive but not constant
-
-If Eq1 forces constant operation or one element → answer is almost certainly TRUE
-
-## STEP 5: Try to prove FALSE by counterexample
-
-If you haven't proven TRUE, try to find a counterexample.
-
-TRY SMALL MAGMAS:
-- 2-element magma {0,1}: there are only 16 possible operation tables
-- For each table, check: does it satisfy Eq1? If yes, does it satisfy Eq2?
-- If you find a table satisfying Eq1 but NOT Eq2 → FALSE
-
-Most useful 2-element magmas to check:
-  Table A: 0*0=0, 0*1=0, 1*0=0, 1*1=0 (left-zero)
-  Table B: 0*0=0, 0*1=1, 1*0=0, 1*1=1 (right-projection)
-  Table C: 0*0=0, 0*1=0, 1*0=1, 1*1=1 (left-projection)
-  Table D: 0*0=1, 0*1=0, 1*0=0, 1*1=1 (flip)
-
-## STEP 6: Structural reasoning if still unsure
-
-If neither substitution nor counterexample worked:
-- If Eq1 and Eq2 share very similar structure → lean TRUE
-- If Eq2 introduces fundamentally different nesting patterns → lean FALSE
-- If Eq1 is "x = [something with many free vars]" and Eq2 is similar but with different nesting → carefully check substitution
-- When genuinely uncertain → answer FALSE (63% base rate favors it)
-
-## CRITICAL REMINDERS
-- Always attempt Step 3 (substitution) seriously before concluding FALSE
-- The most common ERROR is saying FALSE when TRUE — the derivation was missed
-- If Eq1 has more variables appearing in specific patterns → it's probably stronger
-- Equations forcing all elements equal (derivable x=y) imply EVERYTHING
+### Almost always FALSE:
+- Eq2 has more free variables than Eq1
+- Eq2 introduces different nesting structure not derivable from Eq1
+- Eq1 is "weak" (many magmas satisfy it) but Eq2 is "strong" (few satisfy it)

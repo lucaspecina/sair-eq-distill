@@ -111,7 +111,7 @@ async def evaluate_single(
             response = await client.chat.completions.create(
                 model=model,
                 messages=[{"role": "user", "content": prompt}],
-                max_completion_tokens=8192,
+                max_completion_tokens=int(os.getenv("EVAL_MAX_TOKENS", "4096")),
             )
             answer_text = response.choices[0].message.content or ""
             predicted = parse_verdict(answer_text)
