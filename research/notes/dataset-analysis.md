@@ -211,6 +211,23 @@ Left/right projections satisfy 1214 equations each.
 For counterexamples: magmas 0001 and 1000 satisfy very few equations — if
 either satisfies Eq1 but not Eq2, that's a quick FALSE proof.
 
+## Evaluation Infrastructure Issues
+
+### gpt-5-nano needs high max_completion_tokens
+Both gpt-5-nano and gpt-5.3-chat are reasoning models that spend tokens on
+internal "thinking". With max_completion_tokens=4096, nano often returns EMPTY
+responses (all tokens consumed by reasoning, nothing left for output).
+Must use max_completion_tokens=8192 or higher.
+
+### Evaluation speed
+Each eval call takes 15-40 seconds (reasoning models). 20 problems × 2 models
+= 40 calls = 5-13 minutes per evaluation. This limits iteration speed.
+
+### Implication for autoresearch
+The autoresearch hill-climbing loop would take ~10 min per iteration.
+8 hours overnight = ~48 iterations. Manageable but not fast.
+For evolutionary approach (OpenEvolve), need even smaller sample sizes.
+
 ## Open questions
 - [ ] Can few-shot examples in cheatsheet help more than rules?
 - [ ] What's the optimal balance of rules vs examples in 10KB?
