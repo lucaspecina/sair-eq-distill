@@ -8,6 +8,7 @@
 | Autoresearch workflow patterns | [notes/initial-research.md](notes/initial-research.md) | Section: Autoresearch |
 | Optimization tracks (1-5) | [notes/initial-research.md](notes/initial-research.md) | Section: Estrategias |
 | Dataset analysis | [notes/dataset-analysis.md](notes/dataset-analysis.md) | First pass complete — major findings |
+| Model reasoning analysis | [notes/model-reasoning-analysis.md](notes/model-reasoning-analysis.md) | Analyzed 25 models' reasoning patterns |
 | Evolutionary prompt optimization | — | Not started |
 | Isomorphisms with other fields | [notes/isomorphisms.md](notes/isomorphisms.md) | 4 isomorphisms identified |
 
