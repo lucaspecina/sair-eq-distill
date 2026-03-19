@@ -1,4 +1,5 @@
 # eq-distill project-specific
+.env
 results.tsv
 eval/last_run_details.json
 data/processed/
