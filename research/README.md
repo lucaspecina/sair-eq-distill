@@ -9,7 +9,7 @@
 | Optimization tracks (1-5) | [notes/initial-research.md](notes/initial-research.md) | Section: Estrategias |
 | Dataset analysis | [notes/dataset-analysis.md](notes/dataset-analysis.md) | First pass complete — major findings |
 | Evolutionary prompt optimization | — | Not started |
-| Isomorphisms with other fields | — | Not started |
+| Isomorphisms with other fields | [notes/isomorphisms.md](notes/isomorphisms.md) | 4 isomorphisms identified |
 
 ## Reading order
 1. `notes/initial-research.md` — Everything gathered on day 1

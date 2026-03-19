@@ -1,37 +1,68 @@
 # Equational Theories — Implication Cheat Sheet
 
-## What you're solving
-Given two equational laws A and B for magmas (sets with binary operation ◇),
-determine if A implies B (every magma satisfying A must satisfy B).
+## The Problem
+Given two equational laws A and B for magmas (sets with a binary operation *),
+determine if A implies B (every magma satisfying A must also satisfy B).
 
-## Key Rules
+## Critical Facts About the Implication Structure
 
-### 1. Trivial implications
-- Every equation implies itself (reflexivity).
-- Equation 1 (x = x) is implied by ALL equations (it's the tautology).
-- Equation 2 (x = y) implies EVERY equation (it collapses the magma to one element).
+Implication is a PREORDER (reflexive + transitive):
+- A implies A (always true).
+- If A implies B and B implies C, then A implies C.
+- About 37% of all pairs are true implications, 63% are false.
 
-### 2. Substitution test
+The 4694 equations form 1415 EQUIVALENCE CLASSES under mutual implication.
+These classes form a DAG of height 15 with one source and one sink:
+- TOP (strongest): equations equivalent to "x = y" — they imply everything.
+  These equations force all elements to be equal (one-element magma only).
+- BOTTOM (weakest): "x = x" — implied by everything, implies nothing else.
+
+## Rules for Determining Implication
+
+### Rule 1: Variable Count Heuristic
+Equations with MORE distinct variables tend to be STRONGER (higher in the DAG).
+If eq1 has more variables than eq2, implication is more likely TRUE.
+If eq1 has fewer variables than eq2, implication is more likely FALSE.
+
+### Rule 2: "Free" Variables on the RHS
+If the equation has variables on the RHS that don't appear on the LHS,
+the equation is STRONGER (more restrictive). It forces the operation to
+produce specific values regardless of those free variable inputs.
+Example: "x = y * z" has y,z free on RHS → very strong (equivalent to x = y).
+
+### Rule 3: Substitution Test
 If you can obtain equation B from equation A by substituting variables
-(replacing a variable with a term), then A implies B.
-Example: x ◇ y = y ◇ x (commutativity) implies x ◇ x = x ◇ x (trivially).
+with terms (replacing a variable with an expression), then A implies B.
+This is a SUFFICIENT condition for implication (if it works, answer TRUE).
 
-### 3. Structural comparison
-- If A is "more restrictive" than B (A forces more constraints), A likely implies B.
-- Count variables: if B uses variables not in A, implication is less likely.
-- Nesting depth: deeper nesting = more restrictive = more likely to imply simpler laws.
+### Rule 4: Constant Operations
+Equations of the form "x * y = z * w" (both sides have no shared variables
+with each other) force the operation to be constant. These are VERY STRONG
+and imply most other equations.
 
-### 4. Counterexample strategy
-If unsure, think of small magmas (2-3 elements):
-- A 1-element magma satisfies ALL equations.
-- A 2-element magma with operation table can distinguish many equations.
-- If you can construct a magma satisfying A but not B, answer False.
+### Rule 5: Equations Forcing One-Element Magmas
+Any equation where you can derive "x = y" for arbitrary x, y forces the
+magma to have exactly one element. All such equations are equivalent and
+they imply ALL other equations. Signs: the equation allows you to show
+that any two elements must be equal.
 
-### 5. Common patterns
-- Idempotent laws (x ◇ x = x) are relatively weak — many magmas satisfy them.
-- Constant laws (x ◇ y = z ◇ w) are very strong — few magmas satisfy them.
-- Associativity and commutativity interact: together they're much stronger.
+### Rule 6: Counterexample Thinking
+If unsure, consider small magmas:
+- 1-element magma: satisfies ALL equations.
+- 2-element magma {0,1}: check the 16 possible operation tables.
+  If you can find a table satisfying A but not B, answer FALSE.
+- The most useful 2-element operation: x * y = 0 for all x,y (constant).
 
-### 6. Default reasoning
-- Most random pairs do NOT have implications — when in doubt, lean toward False.
-- Implications are more common when equations share similar structure.
+### Rule 7: Default Bias
+If none of the above rules give a clear answer, lean toward FALSE.
+63% of all pairs are non-implications. The base rate favors FALSE.
+
+## Quick Decision Tree
+1. Are the equations identical or equivalent? → TRUE
+2. Is eq1 of the form "x = y" or forces one element? → TRUE
+3. Is eq2 "x = x"? → TRUE (everything implies the tautology)
+4. Can you substitute variables to get eq2 from eq1? → TRUE
+5. Does eq1 have fewer variables than eq2? → Likely FALSE
+6. Does eq1 have variables only on one side that eq2 doesn't? → Consider TRUE
+7. Can you think of a 2-element magma satisfying eq1 but not eq2? → FALSE
+8. If unsure → FALSE
