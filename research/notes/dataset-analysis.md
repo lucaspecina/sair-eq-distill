@@ -137,9 +137,40 @@ Substitution is a valid rule (87% precision on normal) but:
 - Almost useless on hard problems (17% precision)
 - Hard problems require deeper reasoning than syntactic matching
 
-## Open questions for next analysis
-- [ ] What features predict DAG level? (variable count, depth, structure?)
-- [ ] Can we cluster classes by syntactic properties?
-- [ ] What's the relationship between equivalence class size and DAG level?
-- [ ] Can a small number of rules describe most of the 4824 edges?
-- [ ] What do the hard problems look like in the DAG? (close nodes? far apart?)
+## Multi-Feature Predictor Results
+
+Combining satisfaction scores + variable heuristics + rhs_only_vars:
+
+| Dataset | Multi-feature | Sat+vars | Always False |
+|---------|--------------|----------|--------------|
+| normal | **85.4%** | 83.8% | 50.0% |
+| hard | 54.5% | 46.0% | 63.0% |
+| hard1 | 53.6% | 46.4% | 65.2% |
+| hard2 | 54.5% | 53.5% | 50.0% |
+
+### KEY INSIGHT: Two completely different regimes
+- **Normal problems**: syntactic heuristics work great (85% ceiling)
+- **Hard problems**: heuristics barely beat random (55%). These require
+  genuine algebraic reasoning, not pattern matching.
+
+The cheatsheet needs TWO strategies:
+1. Fast heuristics for normal problems (variable counts, satisfaction)
+2. Algebraic reasoning guidelines for hard problems (counterexamples,
+   proof strategies, structural properties)
+
+### Satisfaction Score Distribution:
+- 1558 equations (33.2%): never satisfied → equiv to x=y
+- 1146 equations (24.4%): satisfaction 1-5%
+- 1511 equations (32.2%): satisfaction 5-10%
+- 402 equations (8.6%): satisfaction 10-20%
+- 74 equations (1.6%): satisfaction 20-50%
+- 3 equations: satisfaction > 50%
+- 1 equation: always satisfied (x = x)
+
+Satisfaction score as sole predictor: 70.4% on normal, 55.5% on hard2.
+
+## Open questions
+- [ ] What makes hard problems hard? Analyze the specific structure
+- [ ] Can we teach the model algebraic reasoning for hard problems?
+- [ ] What's the scoring weight of hard vs normal in the competition?
+- [ ] Should we optimize for normal (bigger impact) or hard (harder ceiling)?
