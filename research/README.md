@@ -7,7 +7,7 @@
 | Competition & ETP data | [notes/initial-research.md](notes/initial-research.md) | Sections: Competencia, ETP |
 | Autoresearch workflow patterns | [notes/initial-research.md](notes/initial-research.md) | Section: Autoresearch |
 | Optimization tracks (1-5) | [notes/initial-research.md](notes/initial-research.md) | Section: Estrategias |
-| Dataset analysis | — | Not started |
+| Dataset analysis | [notes/dataset-analysis.md](notes/dataset-analysis.md) | First pass complete — major findings |
 | Evolutionary prompt optimization | — | Not started |
 | Isomorphisms with other fields | — | Not started |
 
