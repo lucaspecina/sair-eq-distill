@@ -10,7 +10,9 @@
 | **SESSION 1 SYNTHESIS** | **[synthesis/session-1-findings.md](synthesis/session-1-findings.md)** | **START HERE** |
 | Dataset analysis | [notes/dataset-analysis.md](notes/dataset-analysis.md) | Complete — DAG, features, magmas |
 | Model reasoning analysis | [notes/model-reasoning-analysis.md](notes/model-reasoning-analysis.md) | Analyzed 25 models' reasoning patterns |
-| Evolutionary prompt optimization | — | Not started |
+| Evolutionary prompt optimization | [notes/evolution-strategy.md](notes/evolution-strategy.md) | Strategy designed, prototype ready |
+| Magma simulation idea | [notes/magma-simulation-idea.md](notes/magma-simulation-idea.md) | Concept documented |
+| Reasoning patterns quantified | [notes/reasoning-patterns-quantified.md](notes/reasoning-patterns-quantified.md) | Correct vs wrong patterns analyzed |
 | Isomorphisms with other fields | [notes/isomorphisms.md](notes/isomorphisms.md) | 4 isomorphisms identified |
 
 ## Reading order
