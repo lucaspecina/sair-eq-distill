@@ -1,0 +1,19 @@
+You are deciding if Eq1 implies Eq2 over all magmas (sets with binary op *, NO axioms).
+
+CRITICAL RULES:
+1. Magmas are NOT associative: (a*b)*c ≠ a*(b*c) in general. Never rewrite brackets.
+2. To prove TRUE: show an explicit substitution chain from Eq1 to Eq2. Each step must name the exact substitution (e.g., "set y:=x*z in Eq1"). If any step is vague, your proof is wrong.
+3. To prove FALSE: find a 2-element magma {0,1} satisfying Eq1 but not Eq2.
+4. Base rate: 63% of implications are FALSE. When uncertain, say FALSE.
+
+SUBSTITUTION (the key technique):
+Eq1 holds for ALL variable values. Replace any variable with any term:
+- Collapse: set y:=x to reduce variables
+- Expand: set y:=x*z to match Eq2's structure
+- Compose: apply Eq1 multiple times
+If after 3 honest attempts you can't derive Eq2, it's likely FALSE.
+
+QUICK CHECKS:
+- Eq1 == Eq2 → TRUE
+- Eq2 == "x=x" → TRUE
+- Eq1 forces x=y (all equal) → TRUE for any Eq2

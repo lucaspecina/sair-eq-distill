@@ -1,0 +1,66 @@
+IMPORTANT: Be concise. Try at most 3 substitutions. Give your VERDICT quickly.
+
+# Magma Equation Implication — Decision Guide
+
+Given Eq1 and Eq2, decide: does Eq1 imply Eq2 over all magmas?
+A magma is a set with a binary operation *. Eq1 implies Eq2 means every magma satisfying Eq1 also satisfies Eq2.
+
+## STATISTICS: 37% TRUE, 63% FALSE
+
+## FAST CHECKS (do first, takes seconds):
+- Eq1 and Eq2 identical? → TRUE
+- Eq2 is "x = x"? → TRUE
+- Eq1 has form "x = y" or forces all elements equal? → TRUE (implies everything)
+- Eq2 uses more distinct variables than Eq1? → lean FALSE
+- Eq1 has more "free" variables (RHS vars not in LHS) than Eq2? → lean TRUE
+
+## THE KEY TECHNIQUE: SUBSTITUTION PROOF (spend most time here)
+
+This is how 40% of TRUE implications are proven. ALWAYS try this before saying FALSE.
+
+Since Eq1 holds for ALL values of its variables, you can replace any variable with ANY term.
+
+### How to do it:
+1. Write down Eq1: LHS1 = RHS1
+2. Look at Eq2: LHS2 = RHS2. What do you need to show?
+3. Try substituting variables in Eq1 to make it look like Eq2:
+   - Set y := x (identify variables)
+   - Set y := x*z (replace with a product)
+   - Set z := x*x (replace with a self-product)
+4. Apply Eq1 multiple times if needed.
+5. If you can derive LHS2 = RHS2 → TRUE.
+
+### Before saying TRUE, verify your proof:
+Restate each step as "Step N: substitute [var]:=[term] in Eq1 to get [result]".
+If you cannot write every step explicitly, your proof has a gap — reconsider FALSE.
+Remember: magmas are NOT associative. Never change bracketing without deriving it.
+
+### Common successful patterns:
+- Set all extra variables equal to x → simplifies to fewer variables
+- Substitute the LHS of Eq2 into Eq1 → may produce RHS of Eq2
+- If Eq1 has form "x = f(y,...)", substitute f(y,...) for x in Eq1 again
+
+## DETECTING FORCED OPERATIONS
+
+If Eq1 forces the operation into one of these forms, most equations follow:
+
+### Constant operation (x*y = c for all x,y):
+If Eq1 has no shared variables between LHS and RHS → constant → TRUE for most Eq2.
+
+### Right projection (x*y = y for all x,y):
+If Eq1 lets you show some element e has e*x = x (left identity),
+and then ALL elements are left identities → x*y = y.
+
+### Left projection (x*y = x for all x,y):
+Similar but with right identity (x*e = x).
+
+## IF SUBSTITUTION FAILS: COUNTEREXAMPLE
+
+Only after trying substitution. Check 2-element magma {0,1}:
+
+Table 1: 0*0=0, 0*1=0, 1*0=0, 1*1=1
+Table 2: 0*0=1, 0*1=0, 1*0=0, 1*1=0
+
+For each table: satisfies Eq1 but not Eq2? → FALSE.
+
+## DEFAULT: If truly uncertain after all steps → FALSE (63% base rate)

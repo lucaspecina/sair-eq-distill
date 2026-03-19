@@ -23,12 +23,22 @@
 | Latent space encoding | [notes/latent-space-encoding.md](notes/latent-space-encoding.md) | PCA dimensions describable in text |
 | Isomorphisms with other fields | [notes/isomorphisms.md](notes/isomorphisms.md) | 4 isomorphisms identified |
 
+| **SESSION 2 SYNTHESIS** | **[synthesis/session-2-findings.md](synthesis/session-2-findings.md)** | **Robust eval, A/B tests, error analysis** |
+| Codex strategy review | [notes/codex-strategy-review.md](notes/codex-strategy-review.md) | Critical feedback on strategy |
+| A/B test results | [notes/ab-test-session2.md](notes/ab-test-session2.md) | v6 vs v12-v16 controlled comparison |
+| Error-driven iteration | [notes/error-driven-iteration.md](notes/error-driven-iteration.md) | Methodology for systematic improvement |
+| Cheatsheet harm hypothesis | [notes/cheatsheet-harm-hypothesis.md](notes/cheatsheet-harm-hypothesis.md) | Resolved: v6 helps, doesn't harm |
+| Compressed cheatsheet vision | [notes/compressed-cheatsheet-vision.md](notes/compressed-cheatsheet-vision.md) | Target format for winning cheatsheet |
+| Evolutionary optimizer design | [notes/evolutionary-optimizer-design.md](notes/evolutionary-optimizer-design.md) | AlphaEvolve-inspired, nano=alumno, gpt-5.4=profesor |
+| Diffusion idea (future) | [notes/diffusion-idea.md](notes/diffusion-idea.md) | PARKED — diffusion-based text optimization |
+
 ## Reading order
-1. **`synthesis/session-1-findings.md`** — START HERE. Key findings from session 1.
-2. `notes/dataset-analysis.md` — Detailed data analysis (equations, DAG, features)
-3. `notes/model-reasoning-analysis.md` — How models reason about implications
-4. `notes/isomorphisms.md` — Connections to other fields
-5. `notes/initial-research.md` — Competition overview and research tracks
+1. **`synthesis/session-2-findings.md`** — LATEST. Robust eval, A/B tests, error analysis.
+2. `synthesis/session-1-findings.md` — Key findings from session 1.
+3. `notes/compressed-cheatsheet-vision.md` — Vision for winning cheatsheet format.
+4. `notes/dataset-analysis.md` — Detailed data analysis (equations, DAG, features)
+5. `notes/model-reasoning-analysis.md` — How models reason about implications
+6. `notes/isomorphisms.md` — Connections to other fields
 
 ## Rules
 - New explorations → `notes/`

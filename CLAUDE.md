@@ -7,6 +7,21 @@
 4. **CHANGELOG.md** — Historial de cambios
 5. **research/README.md** — Índice de investigación, hallazgos, estrategias
 
+## PRIME DIRECTIVE — GANAR ESTA COMPETENCIA
+
+**TODO lo que hacemos debe responder a UNA pregunta: ¿esto nos acerca a ganar?**
+
+- Entender EXACTAMENTE cómo evalúa SAIR (modelos, mix normal/hard, scoring)
+- Cada decisión técnica se justifica contra el método de evaluación
+- No optimizar para nuestro eval local — optimizar para el playground SAIR
+- Si un approach no impacta el score de competencia, NO importa
+- El cheatsheet debe funcionar en MÚLTIPLES modelos, no solo gpt-5-mini
+- Explorar formatos crípticos/comprimidos que empaqueten más info en ≤10KB
+- Usar evolutionary search para encontrar formulaciones que humanos no pensarían
+- **Vision del cheatsheet ganador**: [header explicativo corto] + [reglas comprimidas
+  con patrones matemáticos reales]. No prosa tutorial — información densa. Cada byte
+  debe contener conocimiento matemático, no instrucciones de comportamiento.
+
 ## Project overview
 
 Competencia Mathematics Distillation Challenge (SAIR Foundation, Terence Tao).
