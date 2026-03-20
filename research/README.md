@@ -32,8 +32,14 @@
 | Evolutionary optimizer design | [notes/evolutionary-optimizer-design.md](notes/evolutionary-optimizer-design.md) | AlphaEvolve-inspired, nano=alumno, gpt-5.4=profesor |
 | Diffusion idea (future) | [notes/diffusion-idea.md](notes/diffusion-idea.md) | PARKED — diffusion-based text optimization |
 
+| **SESSION 3 SYNTHESIS** | **[synthesis/session-3-findings.md](synthesis/session-3-findings.md)** | **Evolutionary optimizer, data rules, multi-model** |
+| Transfer test results | [notes/session3-transfer-test.md](notes/session3-transfer-test.md) | CS helps nano/4.1-mini, hurts mini |
+| Data pattern analysis | [notes/session3-data-patterns.md](notes/session3-data-patterns.md) | Perfect rules: lone-var-absent, LZ/RZ |
+| Paper insights | [notes/session3-paper-insights.md](notes/session3-paper-insights.md) | GEPA, EvoPrompt, competition intel |
+| Full evaluation | [notes/session3-full-eval.md](notes/session3-full-eval.md) | 67% on 1200 probs (gpt-4.1-mini) |
+
 ## Reading order
-1. **`synthesis/session-2-findings.md`** — LATEST. Robust eval, A/B tests, error analysis.
+1. **`synthesis/session-3-findings.md`** — LATEST. Evolutionary optimizer, data rules, multi-model.
 2. `synthesis/session-1-findings.md` — Key findings from session 1.
 3. `notes/compressed-cheatsheet-vision.md` — Vision for winning cheatsheet format.
 4. `notes/dataset-analysis.md` — Detailed data analysis (equations, DAG, features)
