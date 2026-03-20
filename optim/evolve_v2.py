@@ -138,12 +138,24 @@ def format_errors_structured(errors, max_errors=10):
 
 MUTATION_PROMPT = """You are improving a cheatsheet (<=10KB) that helps LLMs predict whether one equational law implies another over magmas (binary operation *, no axioms).
 
-STATISTICAL FACTS (use these to prioritize):
+TWO PERFECT RULES (100% accuracy on training data — MUST be in the cheatsheet):
+
+RULE 1 — LONE VARIABLE ABSENT = TRUE:
+If Eq1 has form "v = T(...)" where v does NOT appear anywhere in T, then the implication is ALWAYS TRUE regardless of Eq2. This rule alone solves 49% of TRUE normals with zero errors.
+Example: x = y * (z * w) → x not in RHS → TRUE for any Eq2.
+
+RULE 2 — LZ/RZ COUNTEREXAMPLE = FALSE:
+Left-zero magma: a*b=a. In LZ, every term evaluates to its LEFTMOST variable.
+Right-zero magma: a*b=b. In RZ, every term evaluates to its RIGHTMOST variable.
+If Eq1 holds in LZ (leftmost vars match on both sides) but Eq2 FAILS in LZ (leftmost vars differ) → FALSE.
+Same check with RZ using rightmost variables.
+This catches 45% of all FALSE problems with zero errors.
+
+OTHER STATISTICAL FACTS:
 - Normal: 50% TRUE, 50% FALSE. Hard: 37% TRUE, 63% FALSE.
-- If Eq1 is "v = T(...)" where v NOT in T -> ALWAYS TRUE (100% accuracy, covers 49% of TRUE normals).
 - If Eq1 is "v = T(v,...)" where v IS in T -> 45% TRUE. Needs careful reasoning.
 - If Eq1 has no lone variable -> 15% TRUE. Lean FALSE.
-- Counter-models: left-zero (a*b=a, term=leftmost var), right-zero (a*b=b, term=rightmost var).
+- If Eq2 has 2+ extra variables not in Eq1 -> 82% FALSE.
 
 CURRENT CHEATSHEET (score: {score:.0%}, TRUE acc: {true_acc:.0%}, FALSE acc: {false_acc:.0%}):
 ---
@@ -168,11 +180,10 @@ PARENT B (score: {score_b:.0%}, TRUE: {true_b:.0%}, FALSE: {false_b:.0%}, {size_
 {cheatsheet_b}
 ---
 
-STATISTICAL FACTS:
-- If Eq1 is "v = T(...)" where v NOT in T -> ALWAYS TRUE (100% accuracy).
-- If Eq1 is "v = T(v,...)" where v IS in T -> 45% TRUE.
-- If no lone variable -> 15% TRUE.
-- Counter-models: left-zero (a*b=a), right-zero (a*b=b).
+MANDATORY RULES (100% accurate, must be in result):
+1. If Eq1 = "v = T(...)" with v NOT in T -> ALWAYS TRUE (covers 49% of TRUE normals)
+2. LZ/RZ check: In left-zero (a*b=a) every term = leftmost var. In right-zero (a*b=b) every term = rightmost var. If Eq1 holds in LZ but Eq2 fails -> FALSE (catches 45% of FALSEs)
+3. If Eq2 has 2+ extra vars not in Eq1 -> 82% FALSE
 
 Combine the strongest rules from both parents into a single cheatsheet.
 Take the best ideas from each — don't just concatenate. Synthesize.
@@ -287,7 +298,7 @@ async def run_evolution(seed_path, n_variants, n_generations, endpoint, api_key,
         eval_tasks = [evaluate_cheatsheet(client, p["text"], gen_problems) for p in pool]
         eval_results = await asyncio.gather(*eval_tasks)
         for p, result in zip(pool, eval_results):
-            p["last_score"] = result["score"]
+            p["score"] = result["score"]  # Update score from re-evaluation
             parent_evals.append((p, result))
             print(f"    {p['name']}: {result['score']:.0%} (T:{result['true_acc']:.0%} F:{result['false_acc']:.0%})")
 

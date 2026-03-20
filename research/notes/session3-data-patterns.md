@@ -53,10 +53,40 @@ Lean FALSE here is correct most of the time.
 4. **Hard problems deliberately exclude "lone var absent"** — they test the harder cases.
    The competition likely weights hard more or uses similarly-filtered test sets.
 
+## LZ/RZ Counterexample Check — ANOTHER PERFECT RULE
+
+Check if Eq1 holds in left-zero magma (a*b=a) but Eq2 fails:
+- In LZ, every term = its leftmost variable
+- If leftmost(Eq1_LHS) == leftmost(Eq1_RHS) but leftmost(Eq2_LHS) != leftmost(Eq2_RHS) → FALSE
+
+Same for right-zero magma (a*b=b, term = rightmost variable).
+
+| Rule | FALSE caught | FALSE total | Accuracy |
+|------|-------------|-------------|----------|
+| LZ only | 155 | 626 | 100% (0 errors) |
+| RZ only | 159 | 626 | 100% (0 errors) |
+| LZ or RZ | 280/626 = **45%** | 626 | **100%** (0 errors) |
+
+## Combined Perfect Rules
+
+| Rule | Answers solved | Accuracy |
+|------|---------------|----------|
+| Lone var absent → TRUE | 243 TRUE | 100% |
+| LZ/RZ counterexample → FALSE | 280 FALSE | 100% |
+| **Combined** | **523/1200 = 44%** | **100%** |
+
+If model applies both rules + guesses 50/50 on rest: ~72% accuracy.
+
+## Extra var in Eq2 — Moderate signal
+- Eq2 has 2+ extra vars not in Eq1 → 18% TRUE (strong FALSE lean)
+- Eq2 has 0 extra vars → 54% TRUE (slight TRUE lean)
+
 ## Strategy
 
 The cheatsheet should:
-- State the "lone var absent = TRUE always" rule extremely clearly
-- Give precise heuristics for "lone var present" (the 45/55 split)
-- Teach counterexample checking (LZ/RZ) for "no lone var" and "lone var present"
-- NOT over-assert rules that would cause false positives on the harder cases
+1. **Rule 1 (CLEAREST)**: lone var absent from other side → TRUE always
+2. **Rule 2 (CLEAREST)**: LZ/RZ counterexample check → FALSE always
+   - Teach the mechanical procedure: leftmost/rightmost var comparison
+3. Give heuristics for "lone var present" (the 45/55 split)
+4. Extra vars in Eq2: if 2+, lean FALSE
+5. NOT over-assert rules for self-referential equations
