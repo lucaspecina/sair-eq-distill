@@ -1,0 +1,181 @@
+Magma implication cheatsheet (`*` binary, no axioms)
+
+Goal: predict whether `Eq1 ⇒ Eq2`, i.e. every magma satisfying `Eq1` also satisfies `Eq2`.
+
+Notation
+- `LM(T)`: leftmost variable in term `T`
+- `RM(T)`: rightmost variable in term `T`
+- “lone-variable side”: one whole side is exactly a variable `v`
+- `Vars(E)`: variables appearing in equation `E`
+
+==================================================
+ZERO-ERROR RULES (apply first)
+==================================================
+
+1. LONE VARIABLE ABSENT = TRUE
+- If Eq1 is `v = T` or `T = v` and `v` does NOT occur in `T`,
+  then `Eq1 ⇒ Eq2` for EVERY Eq2.
+- Absolute rule. Stop: TRUE.
+
+2. COUNTEREXAMPLE MAGMAS = FALSE
+If Eq1 holds but Eq2 fails in ANY of these, implication is FALSE.
+
+a) Left-zero (LZ): `a*b=a`
+- Every term evaluates to its leftmost variable.
+- `A=B` holds iff `LM(A)=LM(B)`.
+- Test: if `LM(Eq1L)=LM(Eq1R)` and `LM(Eq2L)≠LM(Eq2R)` ⇒ FALSE.
+
+b) Right-zero (RZ): `a*b=b`
+- Every term evaluates to its rightmost variable.
+- `A=B` holds iff `RM(A)=RM(B)`.
+- Test: if `RM(Eq1L)=RM(Eq1R)` and `RM(Eq2L)≠RM(Eq2R)` ⇒ FALSE.
+
+c) Constant-zero (C0) on `{0,1}`: `a*b=0`
+- Any product evaluates to `0`; a lone variable can still be `1`.
+- So `v = product` or `product = v` generally fails.
+- Useful when one side is a lone variable and the other is composite.
+- If Eq1 is always true in C0 but Eq2 can fail there ⇒ FALSE.
+
+d) XOR on `{0,1}`: `a*b = a+b mod 2`
+- Each term = parity (sum mod 2) of its variable occurrences.
+- Equation holds iff every variable has same parity on both sides.
+- If Eq1 parity matches but Eq2 parity does not ⇒ FALSE.
+
+These 4 are exact countermodels, never false positives.
+
+==================================================
+SAFE TRUE RULES
+==================================================
+
+3. DIRECT SUBSTITUTION INSTANCE = TRUE
+- If Eq2 is obtained from Eq1 by one uniform substitution of variables by terms
+  (renaming is a special case), then TRUE.
+- Same substitution must be used for every occurrence of each variable.
+
+4. DIRECT TRANSPORT OF A SELF-REFERENTIAL LAW = TRUE
+- If Eq1 is `x = T(x, y1,...,yk)` (or `T(...,x)=x`), then substituting `x:=P`
+  gives `P = T(P, y1,...,yk)`.
+- Thus Eq2 is TRUE if it is exactly this transported form, possibly also with a
+  uniform substitution on the other variables.
+- The same term `P` must replace every occurrence of `x`.
+
+5. LITERAL EQUALITY CHAIN ONLY
+- Multiple uses of Eq1 are allowed only when you can write an explicit chain
+  with exact matching sides after substitution.
+- If no clean chain is visible, do NOT assume TRUE.
+
+==================================================
+VERY IMPORTANT: DO NOT OVERGENERALIZE SELF-REFERENCE
+==================================================
+
+6. SELF-REFERENCE ALONE DOES NOT MEAN UNIVERSALITY
+- If Eq1 is `x = T(x,...)` and `x` occurs in `T`, that by itself is NOT enough.
+- Even if `LM(T)≠x` or `RM(T)≠x`, do NOT jump to TRUE.
+- Such laws are only moderately likely true (~45%), not reliable.
+- Default: unless Rule 3/4/5 proves Eq2, keep checking for FALSE and otherwise lean FALSE.
+
+Examples of patterns that are NOT automatically universal:
+- `x = y * (((x*y)*x)*x)`
+- `x = ((y*x)*x) * (x*z)`
+- `x = ((y*z)*(w*w)) * x`
+
+7. ONLY A STRONGER HEURISTIC, NOT A RULE
+- If Eq1 is `x = T(x,...)` and `x` is missing from at least one boundary
+  (`LM(T)≠x` or `RM(T)≠x`), this may be strong, but is NOT decisive.
+- Use it only as a weak tie-breaker after failed countermodel checks and after
+  failing to prove a direct instance/transport.
+- Never use this heuristic against Rule 2.
+
+==================================================
+FALSE-LEANING PATTERNS
+==================================================
+
+8. NO LONE-VARIABLE SIDE IN Eq1 ⇒ LEAN FALSE
+- If Eq1 is composite = composite, implication is usually FALSE
+  unless Eq2 is a direct substitution instance or a short explicit chain consequence.
+
+9. Eq1 SELF-REFERENTIAL WITH NO DIRECT LINK TO Eq2 ⇒ LEAN FALSE
+- If Eq1 is `x = T(x,...)` but Eq2 is not a direct transport/substitution consequence,
+  prefer FALSE.
+- This is especially important when Eq2 introduces rearranged/new context rather than
+  preserving Eq1’s shape.
+
+10. MANY FRESH VARIABLES IN Eq2 ⇒ STRONG FALSE LEAN
+- If Eq2 contains 2 or more variables not in Eq1, prefer FALSE,
+  unless Rule 1 applies or Eq2 is clearly a substitution instance.
+
+11. BOUNDARY TESTS OF Eq2 CAN CONFIRM FALSE QUICKLY
+- If Eq2 has unequal leftmost variables, LZ kills it.
+- If Eq2 has unequal rightmost variables, RZ kills it.
+- Always compare against whether Eq1 survives in that same magma.
+
+==================================================
+ANTI-MISTAKE WARNINGS
+==================================================
+
+12. RULE 1 DEPENDS ONLY ON Eq1
+- Never test the “lone variable absent” condition on Eq2.
+
+13. SHARED SUBTERMS / SIMILAR SHAPE ARE NOT ENOUGH
+- Need a full uniform substitution or explicit equality chain.
+- “Looks derivable” is not evidence.
+
+14. CHECK LZ/RZ CORRECTLY
+- In LZ every term is exactly its leftmost variable.
+- In RZ every term is exactly its rightmost variable.
+- Do not simplify incorrectly; just read the boundary variable.
+
+15. XOR CHECK = PARITY CHECK
+- Count occurrences of each variable mod 2 on each side.
+- Eq holds in XOR iff all variable parities match across the two sides.
+
+16. C0 CHECK
+- Any composite term = `0`.
+- Lone variable side remains a variable, not automatically `0`.
+- So equations mixing variable vs composite often fail in C0.
+
+==================================================
+DECISION PROCEDURE
+==================================================
+
+1. Parse Eq1/Eq2 and compute:
+   - lone-variable sides
+   - `LM`, `RM`
+   - variable sets
+   - XOR parity signatures
+
+2. Apply Rule 1 on Eq1.
+   - If `v = T` or `T = v` with `v` absent from `T` ⇒ TRUE.
+
+3. Apply Rule 2 countermodels.
+   - LZ counterexample ⇒ FALSE.
+   - RZ counterexample ⇒ FALSE.
+   - C0 counterexample ⇒ FALSE.
+   - XOR counterexample ⇒ FALSE.
+
+4. Check if Eq2 is a direct substitution instance of Eq1.
+   - If yes ⇒ TRUE.
+
+5. Check direct transport from a self-referential Eq1.
+   - If Eq2 is exactly that transported pattern ⇒ TRUE.
+
+6. Check for a short explicit equality chain using substituted copies of Eq1.
+   - If clear and literal ⇒ TRUE.
+
+7. Otherwise use cautious defaults:
+   - If Eq1 has no lone-variable side ⇒ FALSE.
+   - If Eq1 is self-referential but Eq2 is not a direct transport/instance ⇒ usually FALSE.
+   - If Eq2 has 2+ fresh variables ⇒ strongly prefer FALSE.
+
+8. Final tie-break:
+   - Prefer FALSE unless you have a concrete derivation or Rule 1.
+
+Compact reminders
+- `x = T(no x)` => ALWAYS TRUE.
+- LZ: compare leftmost vars.
+- RZ: compare rightmost vars.
+- C0: product=0, lone variable survives.
+- XOR: compare parity of each variable.
+- Direct substitution/transport => TRUE.
+- Self-reference is NOT automatically universal.
+- When uncertain, prefer FALSE.

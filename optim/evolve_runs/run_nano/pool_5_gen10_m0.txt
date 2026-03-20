@@ -1,0 +1,161 @@
+Magma implication cheatsheet (`*` binary, no axioms)
+
+Goal: predict whether `Eq1 ⇒ Eq2` holds in all magmas satisfying `Eq1`.
+
+Notation
+- `Vars(E)`: variables in equation `E`
+- `LM(T)`, `RM(T)`: leftmost / rightmost variable in term `T`
+- lone-variable side: a whole side is exactly one variable `v`
+- composite term: any non-variable term
+- XOR signature: parity mod 2 of each variable’s occurrences
+
+==================================================
+ABSOLUTE RULES
+==================================================
+
+1. LONE VARIABLE ABSENT = TRUE
+- If Eq1 is `v = T` or `T = v` and `v` does NOT occur anywhere in `T`,
+  then `Eq1 ⇒ Eq2` for EVERY Eq2.
+- Stop immediately: TRUE.
+
+2. COUNTEREXAMPLE MAGMAS = FALSE
+- If Eq1 holds but Eq2 fails in ANY magma below, implication is FALSE.
+- Always check Eq1 in the SAME magma first.
+
+a) Left-zero (LZ): `a*b=a`
+- Every term evaluates to `LM(term)`.
+- `A=B` holds iff `LM(A)=LM(B)`.
+
+b) Right-zero (RZ): `a*b=b`
+- Every term evaluates to `RM(term)`.
+- `A=B` holds iff `RM(A)=RM(B)`.
+
+c) Constant-zero (C0) on `{0,1}`: `a*b=0`
+- Every composite term evaluates to `0`; a lone variable stays that variable.
+- Universal validity in C0:
+  - composite = composite : always true
+  - `u = v` : true iff same variable symbol
+  - variable = composite / composite = variable : not universally true
+
+d) XOR on `{0,1}`: `a*b = a+b mod 2`
+- Every term = parity sum of its variables.
+- `A=B` holds iff every variable has same parity on both sides.
+
+==================================================
+SAFE TRUE RULES
+==================================================
+
+3. DIRECT SUBSTITUTION INSTANCE = TRUE
+- If Eq2 is exactly a uniform substitution instance of Eq1 (possibly after swapping Eq1 sides), then TRUE.
+- Renaming variables counts.
+- Each source variable must be replaced consistently everywhere.
+
+4. SELF-REFERENCE TRANSPORT = TRUE
+- If Eq1 is `x = T(x,y1,...,yk)` or `T(x,y1,...,yk) = x`,
+  then substituting `x := P` yields `P = T(P,y1,...,yk)` or `T(P,y1,...,yk)=P`.
+- If Eq2 is exactly of that form, possibly with a further uniform substitution on the other variables, then TRUE.
+- The SAME term `P` must replace every occurrence of `x`.
+
+5. EXPLICIT SHORT CHAIN = TRUE
+- Multiple uses of Eq1 are allowed only when you can write a short literal chain,
+  each step exactly Eq1 or its symmetric form under substitution.
+- If no explicit chain is visible, do NOT claim TRUE.
+
+==================================================
+IMPORTANT: REMOVE UNSOUND RULE
+==================================================
+
+6. DO NOT USE “MISSING VARIABLE FROM Eq2 ⇒ TRUE”
+- This heuristic is UNSOUND.
+- In particular, from `x = T(x,...,z,...)` you may NOT conclude TRUE just because Eq2 omits `z`.
+- Counterexamples exist:
+  - `x = x * ((x*y)*(z*z))` does NOT imply `x = x * (((x*y)*x)*y)`
+  - `x = (y*(z*x))*(w*x)` does NOT imply `x*(x*y) = (x*x)*y`
+- So omission of a variable from Eq2 is only a weak hint, never a proof.
+
+==================================================
+FALSE-LEANING FACTS
+==================================================
+
+7. NO LONE-VARIABLE SIDE IN Eq1 ⇒ STRONG FALSE LEAN
+- If Eq1 is composite = composite, implication is usually FALSE
+  unless Rule 3 or 5 gives a concrete proof.
+
+8. 2+ FRESH VARIABLES IN Eq2 ⇒ STRONG FALSE LEAN
+- If Eq2 uses at least 2 variables not in Eq1, prefer FALSE,
+  unless Rule 1, 3, 4, or 5 applies.
+
+9. SELF-REFERENCE ALONE IS NOT A PROOF
+- Eq1 of form `x = T(x,...)` does NOT by itself imply other laws of form `x = U(x,...)`.
+- Similar “absorbing/idempotent” shape is irrelevant without exact transport/substitution.
+
+10. BOUNDARY MISMATCH ONLY AFFECTS LZ/RZ USABILITY
+- If Eq1 is `x = T(...)` and `LM(T) ≠ x`, then Eq1 fails in LZ.
+- If `RM(T) ≠ x`, then Eq1 fails in RZ.
+- This only means those magmas cannot serve as counterexamples here.
+- It does NOT make Eq2 likely TRUE.
+
+==================================================
+ANTI-MISTAKE WARNINGS
+==================================================
+
+11. RULE 1 DEPENDS ONLY ON Eq1
+- Never apply “lone variable absent” to Eq2.
+
+12. CHECK EQ1 BEFORE USING A TEST MAGMA
+- Common mistake: notice Eq2 fails in LZ/RZ/XOR/C0 but forget Eq1 also fails there.
+- Such a magma proves nothing.
+
+13. C0 IS UNIVERSAL VALIDITY, NOT ONE ASSIGNMENT
+- Need Eq1 true for all valuations in C0.
+
+14. XOR IGNORES ORDER AND BRACKETING
+- Only variable parities matter.
+
+15. SHAPE SIMILARITY IS NOT DERIVABILITY
+- Shared contexts/subterms are not enough.
+
+16. FOR ONE-SHOT COUNTEREXAMPLES, VARIABLE NAMES STILL MATTER
+- Example: in RZ, `x = ...w` means Eq1 holds only if `x=w` as symbols, not by choosing values.
+- The test magmas use universal validity, not existential assignments.
+
+==================================================
+DECISION PROCEDURE
+==================================================
+
+1. Parse Eq1/Eq2 and compute:
+   - lone-variable sides
+   - variable sets
+   - `LM`, `RM`
+   - XOR signatures
+
+2. Apply Rule 1.
+   - If Eq1 is `v=T` or `T=v` with `v` absent from `T` ⇒ TRUE.
+
+3. Apply Rule 2 countermodels.
+   - LZ, RZ, C0, XOR.
+   - If any gives Eq1 true and Eq2 false ⇒ FALSE.
+
+4. Check safe TRUE proofs.
+   - direct substitution instance ⇒ TRUE
+   - self-reference transport ⇒ TRUE
+   - explicit short chain ⇒ TRUE
+
+5. Default.
+   - If Eq1 has no lone-variable side ⇒ FALSE.
+   - If Eq2 has 2+ fresh variables ⇒ FALSE.
+   - Otherwise prefer FALSE unless a concrete TRUE proof exists.
+
+==================================================
+COMPACT REMINDERS
+==================================================
+
+- `x = T` with no `x` in `T` => ALWAYS TRUE.
+- LZ: term = leftmost variable.
+- RZ: term = rightmost variable.
+- C0: composite terms all become `0`.
+- XOR: compare variable parities only.
+- Never use LZ/RZ/C0/XOR unless Eq1 itself holds there.
+- Do NOT use “Eq2 omits a variable from Eq1” as a TRUE rule.
+- Do NOT use “same self-referential pattern” as proof.
+- When uncertain after all checks, prefer FALSE.

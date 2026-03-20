@@ -1,0 +1,162 @@
+Magma implication cheatsheet (`*` binary, no axioms)
+
+Goal: predict whether `Eq1 ⇒ Eq2`, i.e. every magma satisfying `Eq1` also satisfies `Eq2`.
+
+Notation
+- `Vars(E)` = variables occurring in equation `E`
+- `LM(T)` = leftmost variable in term `T`
+- `RM(T)` = rightmost variable in term `T`
+- “lone-variable side” = one whole side is exactly a variable `v`
+
+==================================================
+PERFECT RULES — APPLY FIRST
+==================================================
+
+1. LONE VARIABLE ABSENT = ALWAYS TRUE
+- If Eq1 is `v = T` or `T = v` and `v` does NOT occur in `T`,
+  then `Eq1 ⇒ Eq2` for EVERY Eq2.
+- Absolute rule. Stop immediately: TRUE.
+- This depends only on Eq1, not on Eq2.
+
+2. COUNTEREXAMPLE MAGMAS = ALWAYS FALSE
+If Eq1 holds but Eq2 fails in ANY one of these magmas, then `Eq1 ⇒ Eq2` is FALSE.
+
+a) Left-zero (LZ): `a*b = a`
+- Every term evaluates to its leftmost variable.
+- `A=B` holds iff `LM(A)=LM(B)`.
+- Fast test: if `LM(Eq1L)=LM(Eq1R)` but `LM(Eq2L)≠LM(Eq2R)`, then FALSE.
+
+b) Right-zero (RZ): `a*b = b`
+- Every term evaluates to its rightmost variable.
+- `A=B` holds iff `RM(A)=RM(B)`.
+- Fast test: if `RM(Eq1L)=RM(Eq1R)` but `RM(Eq2L)≠RM(Eq2R)`, then FALSE.
+
+c) Constant-zero (C0) on `{0,1}`: `a*b = 0`
+- Every composite product evaluates to `0`.
+- A lone variable side keeps its assigned value.
+- So:
+  * product = product : always holds
+  * variable = variable : holds iff same variable
+  * variable = product : generally fails
+  * product = variable : generally fails
+- Useful especially when one side is a lone variable and the other is composite.
+
+d) XOR on `{0,1}`: `a*b = a+b mod 2`
+- Every term evaluates to the parity-sum of its variable occurrences.
+- `A=B` holds iff each variable has the same occurrence parity on both sides.
+- Count mod 2, not raw occurrences.
+
+Warning:
+- A magma is a valid counterexample only if Eq1 holds there AND Eq2 fails there.
+
+==================================================
+SAFE TRUE RULES
+==================================================
+
+3. DIRECT UNIFORM SUBSTITUTION = TRUE
+- If Eq2 is obtained from Eq1 by one uniform substitution of variables by terms,
+  then TRUE.
+- Renaming variables is the simplest case.
+- The same variable in Eq1 must be replaced the same way everywhere.
+
+4. TRANSPORT FROM A VARIABLE LAW = TRUE
+- If Eq1 is `x = T(x,u1,...,uk)` or `T(x,u1,...,uk) = x`,
+  then substituting `x := P` gives
+  `P = T(P,u1,...,uk)` or `T(P,u1,...,uk) = P`.
+- Any further uniform substitution/renaming on the other variables is also allowed.
+- The SAME term `P` must replace every occurrence of `x`.
+
+5. SHORT LITERAL EQUALITY CHAIN = TRUE
+- You may use Eq1, its symmetric form, and one visible substitution instance to make a short chain:
+  `A = R` and `R = B`, hence `A = B`.
+- Only accept this when the middle term matches exactly.
+- If no explicit exact chain is visible, do NOT infer TRUE.
+
+==================================================
+IMPORTANT NON-RULE
+==================================================
+
+6. SELF-REFERENCE ALONE IS NOT ENOUGH
+- If Eq1 is `x = T(x,...)` or `T(...,x,...) = x` but Rule 1 does NOT apply,
+  this does NOT imply arbitrary equations.
+- Do NOT say TRUE from “self-embedding”, “same boundary variables”, or similar shape alone.
+- For self-referential Eq1, say TRUE only if Rule 3, 4, or 5 clearly applies.
+
+==================================================
+STRONG FALSE-LEANING HEURISTICS
+==================================================
+
+7. TWO OR MORE EXTRA VARIABLES IN Eq2 = STRONG FALSE SIGNAL
+- If `|Vars(Eq2) \ Vars(Eq1)| >= 2`, strongly prefer FALSE.
+- Override this only if Rule 1, 3, 4, or 5 proves TRUE.
+
+8. NO LONE-VARIABLE SIDE IN Eq1 = USUALLY FALSE
+- If Eq1 is composite = composite, TRUE is rare.
+- Prefer FALSE unless Eq2 is a clear direct instance, transport, or exact short chain.
+
+9. BOUNDARY PATTERNS THAT DON’T MATCH SUPPORT FALSE
+- Even when LZ/RZ are not decisive proofs, mismatched leftmost/rightmost behavior is evidence for FALSE.
+- Shared subterms or similar shape are not enough for TRUE.
+
+==================================================
+ANTI-MISTAKE WARNINGS
+==================================================
+
+10. RULE 1 REQUIRES AN ENTIRE SIDE TO BE A VARIABLE
+- `v = T` or `T = v` only.
+- A variable merely disappearing inside a composite does NOT count.
+
+11. DO NOT MISREAD LZ/RZ
+- LZ cares only about leftmost variables.
+- RZ cares only about rightmost variables.
+- If Eq1 already fails in that magma, it gives no counterexample.
+
+12. C0 IS A SHAPE TEST
+- In C0, all products collapse to `0`, but lone variables remain free.
+- Best used for lone-variable-vs-product equations.
+
+13. XOR IS PARITY ONLY
+- A variable appearing twice cancels.
+- Example: `x*(x*y)` has the same XOR value as `y`.
+
+14. SHAPE RESEMBLANCE DOES NOT IMPLY CONSEQUENCE
+- Shared variables, shared subterms, or visual similarity do not justify TRUE.
+- Require Rule 1, 3, 4, or 5.
+
+==================================================
+FAST DECISION PROCEDURE
+==================================================
+
+1. Check Rule 1 on Eq1.
+   - If yes, answer TRUE immediately.
+
+2. Check counterexample magmas.
+   - LZ, RZ, C0, XOR.
+   - If Eq1 holds and Eq2 fails in any one, answer FALSE.
+
+3. Check exact TRUE patterns.
+   - Direct uniform substitution instance? ⇒ TRUE.
+   - Exact transport from a variable law? ⇒ TRUE.
+   - Short literal equality chain? ⇒ TRUE.
+
+4. Apply heuristics.
+   - `2+` extra variables in Eq2 ⇒ strong FALSE bias.
+   - Eq1 composite=composite ⇒ FALSE bias.
+   - Self-reference without exact transport/chain ⇒ FALSE bias.
+
+5. Fallback.
+   - If still uncertain, answer FALSE.
+
+==================================================
+COMPACT REMINDERS
+==================================================
+
+- `v = T` with `v ∉ Vars(T)` (or symmetric) ⇒ ALWAYS TRUE.
+- LZ: every term = leftmost variable.
+- RZ: every term = rightmost variable.
+- C0: every product = `0`; lone variables stay free.
+- XOR: compare parity of variable counts.
+- Direct uniform substitution ⇒ TRUE.
+- Self-reference alone does NOT justify TRUE.
+- `2+` fresh variables in Eq2 ⇒ strong FALSE signal.
+- Default fallback: FALSE.
