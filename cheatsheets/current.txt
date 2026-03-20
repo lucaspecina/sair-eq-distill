@@ -1,18 +1,30 @@
 Magma implication cheatsheet: does Eq1 => Eq2?
 (every magma satisfying Eq1 also satisfies Eq2)
 
+================================================================
+***CRITICAL*** NODE 1 — CHECK THIS FIRST BEFORE ANYTHING ELSE
+================================================================
+
+Is Eq1 of form "v = T" (or "T = v") where v is a single variable
+that does NOT appear ANYWHERE in T?
+  => Answer TRUE immediately. ZERO exceptions. Do NOT check magmas.
+
+Examples of Node 1 matches (all TRUE):
+  x = y*(z*w)           — x absent from RHS => TRUE
+  x = y*((z*(z*w))*z)   — x absent from RHS => TRUE
+  x = (y*z)*(y*(w*z))   — x absent from RHS => TRUE
+  y*((z*(z*w))*z) = x   — x absent from LHS => TRUE (flipped)
+
+WARNING: Do NOT skip Node 1! If v is absent from T, the answer
+is ALWAYS TRUE regardless of Eq2. Do not look for counterexamples.
+
+================================================================
+DECISION TREE (continue only if Node 1 did NOT fire)
+================================================================
+
 KEY DEFINITIONS:
 - LM(T) = leftmost variable of T. Rule: LM(A*B)=LM(A), LM(var)=var.
 - RM(T) = rightmost variable of T. Rule: RM(A*B)=RM(B), RM(var)=var.
-- "n_other" = number of distinct variables in T other than x (for x=T forms).
-
-================================================================
-DECISION TREE (follow in exact order)
-================================================================
-
-NODE 1: Is Eq1 of form v = T (or T = v) with v absent from T?
-  YES => Answer TRUE. This is absolute, zero exceptions.
-         (v must be a single variable, not a compound term.)
 
 NODE 2: Does a counterexample magma exist?
   Test LZ, RZ, C0, XOR (details below).
@@ -25,12 +37,19 @@ NODE 3: Is Eq1 self-referential? (form x = T where x appears in T)
 
 NODE 3A: Self-reference boundary analysis
   Compute LM(T) and RM(T). Count variables in T other than x (n_other).
+  Also count x_occ = how many times x appears in T.
 
   If LM(T) = x AND RM(T) = x (both boundaries):
     => Answer FALSE (these are very weak equations).
 
-  If n_other >= 2 (at least 2 variables besides x in T):
-    => Answer TRUE (strong equation, forces most things).
+  If n_other >= 3:
+    => Answer TRUE (very strong equation, 97% accurate).
+
+  If n_other = 2 AND x_occ >= 3 (x appears 3+ times in T):
+    => Answer FALSE (x dominates, equation not strong enough).
+
+  If n_other = 2 (remaining cases):
+    => Answer TRUE (strong equation, ~80% accurate).
 
   If n_other < 2 (only x and at most 1 other variable in T):
     => Answer FALSE (not strong enough to force arbitrary equations).
@@ -60,6 +79,9 @@ If Eq1 does NOT hold in a magma, that magma cannot serve as counterexample.
   Equation holds iff each variable appears the same number of
   times (mod 2) on both sides.
 
+ONLY use LZ, RZ, C0, XOR as counterexamples. Do NOT invent other
+magmas. If none of these 4 gives a counterexample, move to Node 3.
+
 ================================================================
 HOW TO COMPUTE LM AND RM (critical skill)
 ================================================================
@@ -77,17 +99,23 @@ Examples:
   x*(y*(z*w)):   LM=x  RM=w
 
 ================================================================
-HOW TO COUNT n_other
+HOW TO COUNT n_other AND x_occ
 ================================================================
 
-For Eq1 of form x = T, count how many DISTINCT variables appear
-in T that are NOT x.
+For Eq1 of form x = T:
+  n_other = how many DISTINCT variables appear in T that are NOT x.
+  x_occ = how many TIMES x appears in T (count every occurrence).
 
-Examples:
+n_other examples:
   x = y*(z*(w*(y*z)))  => variables in T: {y,z,w} => n_other=3
   x = y*(x*(x*y))      => variables in T: {x,y} - {x} = {y} => n_other=1
   x = (y*x)*(x*(x*z))  => variables in T: {x,y,z} - {x} = {y,z} => n_other=2
   x = x*(x*(x*x))      => variables in T: {x} - {x} = {} => n_other=0
+
+x_occ examples (count every x in T, including repeats):
+  x = (y*y)*((x*z)*z)  => x appears 1 time => x_occ=1
+  x = (y*(x*z))*(x*x)  => x appears 3 times => x_occ=3
+  x = ((x*y)*x)*(z*x)  => x appears 3 times => x_occ=3
 
 ================================================================
 WORKED EXAMPLES
@@ -136,11 +164,13 @@ EXAMPLE 5: Avoiding common LZ/RZ mistake
 ================================================================
 QUICK REFERENCE
 ================================================================
-v=T, v absent from T       => ALWAYS TRUE
-counterexample magma found  => ALWAYS FALSE
-self-ref, both boundary     => FALSE
-self-ref, n_other >= 2      => TRUE  (high confidence)
-self-ref, n_other < 2       => FALSE (high confidence)
-composite = composite       => lean FALSE
-uncertain                   => lean FALSE
+v=T, v absent from T              => ALWAYS TRUE
+counterexample magma found         => ALWAYS FALSE
+self-ref, both boundary            => FALSE
+self-ref, n_other >= 3             => TRUE  (97%)
+self-ref, n_other=2, x_occ >= 3   => FALSE (75%)
+self-ref, n_other=2, x_occ < 3    => TRUE  (80%)
+self-ref, n_other < 2              => FALSE (91%)
+composite = composite              => lean FALSE
+uncertain                          => lean FALSE
 LM(A*B) = LM(A).  RM(A*B) = RM(B).
