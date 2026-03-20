@@ -31,14 +31,14 @@ load_dotenv()
 DEFAULT_ENDPOINT = os.getenv("AZURE_FOUNDRY_BASE_URL", "")
 DEFAULT_API_KEY = os.getenv("AZURE_INFERENCE_CREDENTIAL", "")
 
-# Models
-EVAL_MODELS = ["gpt-4.1-mini"]
+# Models — configurable via env vars
+EVAL_MODELS = os.getenv("EVAL_MODELS", "gpt-4.1-mini").split(",")
 EVOLVER_MODEL = "gpt-5.4"
 
 # Eval config
-EVAL_NORMAL = 160
-EVAL_HARD = 40
-EVAL_CONCURRENT = 50
+EVAL_NORMAL = int(os.getenv("EVAL_NORMAL", "80"))
+EVAL_HARD = int(os.getenv("EVAL_HARD", "20"))
+EVAL_CONCURRENT = int(os.getenv("EVAL_CONCURRENT", "50"))
 
 # Evolution config
 POOL_SIZE = 6
