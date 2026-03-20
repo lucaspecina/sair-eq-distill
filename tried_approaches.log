@@ -1,0 +1,9 @@
+# Tried Approaches Log
+# Format: DATE | APPROACH | SCORE | RESULT | NOTES
+# Read this FIRST. DO NOT repeat anything here.
+
+2026-03-19 | evolutionary-rewrite-v1: gpt-5.4 rewrites entire cheatsheet from errors (gpt-4.1-mini eval, 50 probs) | 70% | PARTIAL | Evolved from empty to 70%, but plateau after gen 4. Evolver destroys TRUE accuracy.
+2026-03-19 | evolutionary-rewrite-v2: same + crossover mutations (gpt-4.1-mini eval, 200 probs) | 74% | PARTIAL | Crossovers slightly better. Still can't beat seed. gpt-4.1-mini ceiling ~67%.
+2026-03-20 | evolutionary-rewrite-nano: gpt-5.4 rewrites, nano evaluates (50 probs) | 76% | FAILED | Seed stays best after 10 gens. Evolver consistently destroys TRUE accuracy from 84% to 33-41%.
+2026-03-20 | append-mode: gpt-5.4 appends sections without rewriting base (nano+mini eval) | 84% | PARTIAL | Best approach so far. Appended content improved FALSE accuracy. But at 10KB limit, no room for more.
+2026-03-20 | append-mode-nano: same but nano-only eval (50 probs) | 88% peak, 74% avg | NOISY | 88% on one sample but 54% on another. Variance too high with 50 problems.
