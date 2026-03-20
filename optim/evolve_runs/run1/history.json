@@ -1,0 +1,157 @@
+[
+  {
+    "gen": 0,
+    "name": "seed",
+    "score": 0.5
+  },
+  {
+    "gen": 1,
+    "name": "gen1_v0",
+    "score": 0.5
+  },
+  {
+    "gen": 1,
+    "name": "gen1_v1",
+    "score": 0.51
+  },
+  {
+    "gen": 1,
+    "name": "gen1_v2",
+    "score": 0.46
+  },
+  {
+    "gen": 2,
+    "name": "gen2_v0",
+    "score": 0.6
+  },
+  {
+    "gen": 2,
+    "name": "gen2_v1",
+    "score": 0.6
+  },
+  {
+    "gen": 2,
+    "name": "gen2_v2",
+    "score": 0.6
+  },
+  {
+    "gen": 3,
+    "name": "gen3_v0",
+    "score": 0.52
+  },
+  {
+    "gen": 3,
+    "name": "gen3_v1",
+    "score": 0.61
+  },
+  {
+    "gen": 3,
+    "name": "gen3_v2",
+    "score": 0.66
+  },
+  {
+    "gen": 4,
+    "name": "gen4_v0",
+    "score": 0.7
+  },
+  {
+    "gen": 4,
+    "name": "gen4_v1",
+    "score": 0.64
+  },
+  {
+    "gen": 4,
+    "name": "gen4_v2",
+    "score": 0.5
+  },
+  {
+    "gen": 5,
+    "name": "gen5_v0",
+    "score": 0.52
+  },
+  {
+    "gen": 5,
+    "name": "gen5_v1",
+    "score": 0.57
+  },
+  {
+    "gen": 5,
+    "name": "gen5_v2",
+    "score": 0.51
+  },
+  {
+    "gen": 6,
+    "name": "gen6_v0",
+    "score": 0.55
+  },
+  {
+    "gen": 6,
+    "name": "gen6_v1",
+    "score": 0.54
+  },
+  {
+    "gen": 6,
+    "name": "gen6_v2",
+    "score": 0.59
+  },
+  {
+    "gen": 7,
+    "name": "gen7_v0",
+    "score": 0.52
+  },
+  {
+    "gen": 7,
+    "name": "gen7_v1",
+    "score": 0.6
+  },
+  {
+    "gen": 7,
+    "name": "gen7_v2",
+    "score": 0.67
+  },
+  {
+    "gen": 8,
+    "name": "gen8_v0",
+    "score": 0.52
+  },
+  {
+    "gen": 8,
+    "name": "gen8_v1",
+    "score": 0.58
+  },
+  {
+    "gen": 8,
+    "name": "gen8_v2",
+    "score": 0.58
+  },
+  {
+    "gen": 9,
+    "name": "gen9_v0",
+    "score": 0.58
+  },
+  {
+    "gen": 9,
+    "name": "gen9_v1",
+    "score": 0.64
+  },
+  {
+    "gen": 9,
+    "name": "gen9_v2",
+    "score": 0.6
+  },
+  {
+    "gen": 10,
+    "name": "gen10_v0",
+    "score": 0.55
+  },
+  {
+    "gen": 10,
+    "name": "gen10_v1",
+    "score": 0.55
+  },
+  {
+    "gen": 10,
+    "name": "gen10_v2",
+    "score": 0.56
+  }
+]

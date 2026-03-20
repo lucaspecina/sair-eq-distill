@@ -1,0 +1,131 @@
+Decoder
+- Terms are binary trees over one operation `*`; no associativity/commutativity unless forced.
+- `E1 ⇒ E2` means: every magma satisfying identity `E1` also satisfies `E2`.
+- Uniform substitution of variables by arbitrary terms is always allowed.
+- `L(t)` = leftmost leaf variable of term `t`; `R(t)` = rightmost leaf.
+- Test magmas:
+  - left-zero `a*b=a` ⇒ every term evaluates to `L(t)`
+  - right-zero `a*b=b` ⇒ every term evaluates to `R(t)`
+  - constant `a*b=c` ⇒ every identity holds
+- If `E1` implies `x≈y` for distinct variables, the magma is 1-element, so any `E2` follows.
+
+Core rules / compressed patterns
+
+1) Safe collapse
+- If some substitution instance of `E1` has form `x = T` where `x` does NOT occur in `T`, then `E1` trivializes ⇒ TRUE for all `E2`.
+- Same for `T = x` with `x∉Var(T)`.
+
+2) MUCH stronger collapse rule the model missed
+- If `E1` has form `x = T` and the RHS omits `x` entirely, then `E1` already forces 1-element.
+  Reason: `x` is independent of itself, so varying `x` while fixing other vars gives all elements equal.
+- Dually for `T = x` with `x` absent from `T`.
+- This is the main fix for many TRUE cases.
+
+3) Ultra-useful generalization
+- More generally, if an identity has a variable on one side that is absent from the other side, then the identity forces that variable to be independent of its value; hence all elements are equal.
+- In practice:
+  - `x = F(y,z,...)` with no `x` on RHS ⇒ collapse.
+  - `x*y = F(x,z,...)` with no `y` on RHS does NOT by itself collapse.
+  - For product laws, only a whole side being a lone variable is safely collapsing.
+
+4) Direct collapse by self-substitution
+- If `E1` is `x = T(x,...)`, try substitutions setting all other variables to `x` or to one repeated variable.
+- If this yields `x = T'` where `x` disappears, conclude TRUE.
+- If it only yields `x = H(x)`, that alone is not enough.
+
+5) Projection countermodels first for FALSE
+- Test `E1` in left-zero and right-zero.
+- `s=t` holds in left-zero iff `L(s)=L(t)`.
+- `s=t` holds in right-zero iff `R(s)=R(t)`.
+- If `E1` holds in one projection magma and `E2` fails there ⇒ FALSE.
+
+6) Key projection templates
+- `x = T`:
+  - left-zero model if `L(T)=x`
+  - right-zero model if `R(T)=x`
+- `x*y = T`:
+  - left-zero model if `L(T)=x`
+  - right-zero model if `R(T)=y`
+These give many nontrivial models; use them aggressively.
+
+7) But absence-of-x beats projection
+- If `x = T(y,z,...)` with no `x`, do NOT waste time with projections: it already collapses ⇒ TRUE.
+- This corrects many false FALSEs.
+
+8) Frequent TRUE pattern from the bad cases
+Any `E1` of shape `x = term-without-x` is automatically TRUE for every target.
+Examples:
+- `x = ((y*y)*y)*(y*z)`
+- `x = (y*(z*w))*(z*y)`
+- `x = (y*((z*z)*z))*z`
+- `x = (y*z)*((z*w)*w)`
+- `x = y*(((z*y)*w)*y)`
+All collapse immediately.
+
+9) Another important TRUE pattern
+- If `E1` is `x = A*x` or `x = x*A`, do NOT assume collapse.
+- But if the context `A` contains no `x`, substitute `x:=A*x` or identify variables to try to derive an `x = B` with no `x`.
+- Some such laws still collapse, but need proof.
+
+10) Especially strong collapsing family
+- `x = U*x` where `U` contains no `x` often implies every left translation by `U` is identity on all elements named by `x`; by varying `U` via variables, this can force all left translations to be identity and lead to strong consequences.
+- Likewise `x = x*U`.
+- Do not call TRUE from vibe alone; but try substitutions equating `U` with arbitrary terms.
+
+11) Selector / semiprojection countermodels
+When both projections fail on `E1`, try 2-element operations:
+- left-zero / right-zero
+- `a*b=a` except maybe diagonal
+- `a*b=b` except maybe diagonal
+- XOR / addition mod 2
+Useful for refuting speculative TRUEs.
+
+12) Product laws are usually weak
+- `x*y = T` rarely collapses unless a substitution makes one side a lone variable absent from the other.
+- Example danger: `x*y = y*(x*(x*x))` is weak-looking, not a collapse.
+- If projection fails, search small countermodels instead of guessing TRUE.
+
+13) Hard warning from failure
+- `x*y = y*(x*(x*x))` does NOT imply arbitrary other product laws.
+- In right-zero: LHS=`y`, RHS=`x`, so not a model; in left-zero: LHS=`x`, RHS=`y`, also not a model.
+- When both projections fail, that is NOT evidence for TRUE.
+
+14) E2 substitution-instance test
+- If `E2` is obtained from `E1` by uniform substitution of variables by variables/terms, then TRUE.
+- Check carefully before doing anything else.
+
+15) Leaf-signature checklist
+For every term compute `(L,R)`.
+- left-zero checks only `L`
+- right-zero checks only `R`
+This often settles FALSE instantly.
+
+16) False-TRUE traps
+Do NOT infer collapse merely from:
+- recursive/self-embedding `x = C[x]`
+- quadratic occurrence `x = A*(x*x)`
+- asymmetry / deep nesting
+- missing variable from one side of a product law, e.g. `x*y = T(x,...)`
+These often have selector/projection models.
+
+17) True-FALSE balance rule
+Decision order:
+A. If one side is a lone variable absent from the other side ⇒ TRUE immediately.
+B. Try substitution-to-collapse ⇒ TRUE if achieved.
+C. Check if `E2` is a substitution instance of `E1` ⇒ TRUE.
+D. Test left-zero/right-zero on `E1`; if one satisfies `E1` and falsifies `E2` ⇒ FALSE.
+E. Try 2-element selector/custom table.
+F. If no derivation/collapse and a small countermodel seems plausible, prefer FALSE.
+
+18) Mini-derivation trick for collapse
+- From `x = T(y,...)` with no `x`, assign the same values to all vars of `T`; then RHS is fixed while `x` may be any element. Hence all elements equal.
+- Remember this argument explicitly; it is decisive.
+
+19) Another mini-derivation trick
+- If `E1` gives `x = f(params)` and by renaming variables also `y = f(same params)`, then `x=y` follows.
+- This is exactly why `x = term-without-x` collapses.
+
+20) Golden warnings
+- “Complicated” does not mean strong.
+- But “lone variable equals term not containing it” is overwhelmingly strong: immediate collapse.
+- For the provided misses, this was the crucial pattern.

@@ -38,13 +38,13 @@ DEFAULT_ENDPOINT = os.getenv("AZURE_FOUNDRY_BASE_URL", "")
 DEFAULT_API_KEY = os.getenv("AZURE_INFERENCE_CREDENTIAL", "")
 
 # Models
-EVAL_MODEL = "gpt-5-nano"      # the "student" — takes the exam
+EVAL_MODEL = "gpt-4.1-mini"    # the "student" — takes the exam (fast, no reasoning)
 EVOLVER_MODEL = "gpt-5.4"      # the "teacher" — improves the cheatsheet
 
-# Eval config — fast screening
-EVAL_NORMAL = 15
-EVAL_HARD = 5
-EVAL_CONCURRENT = 20  # aggressive parallelism
+# Eval config
+EVAL_NORMAL = 80
+EVAL_HARD = 20
+EVAL_CONCURRENT = 50  # aggressive parallelism
 
 # Evolution config
 POOL_SIZE = 5
@@ -219,13 +219,12 @@ async def run_evolution(
         print(f"GEN {gen}/{n_generations} | Best: {best_ever['score']:.0%} | Pool: {len(pool)}")
         print(f"{'='*60}")
 
-        # 1. Pick parents and evaluate them to get fresh errors
-        #    (evaluate on FRESH problems each time — prevents overfitting)
-        print(f"  Evaluating parents on fresh problems...")
+        # 1. Sample problems for this generation (SAME set for parents AND variants)
+        gen_problems = sample_problems(all_normal, all_hard, EVAL_NORMAL, EVAL_HARD)
+        print(f"  Evaluating parents on {len(gen_problems)} problems...")
         parent_evals = []
-        eval_problems = sample_problems(all_normal, all_hard, EVAL_NORMAL, EVAL_HARD)
         eval_tasks = [
-            evaluate_cheatsheet(client, p["text"], eval_problems)
+            evaluate_cheatsheet(client, p["text"], gen_problems)
             for p in pool
         ]
         eval_results = await asyncio.gather(*eval_tasks)
@@ -262,11 +261,10 @@ async def run_evolution(
             print("  No valid variants, skipping")
             continue
 
-        # 3. Evaluate ALL variants IN PARALLEL on FRESH problems
-        print(f"\n  Evaluating {len(variants)} variants on fresh problems...")
-        fresh_problems = sample_problems(all_normal, all_hard, EVAL_NORMAL, EVAL_HARD)
+        # 3. Evaluate variants on SAME problems as parents (fair comparison)
+        print(f"\n  Evaluating {len(variants)} variants on same {len(gen_problems)} problems...")
         var_eval_tasks = [
-            evaluate_cheatsheet(client, v["text"], fresh_problems)
+            evaluate_cheatsheet(client, v["text"], gen_problems)
             for v in variants
         ]
         var_results = await asyncio.gather(*var_eval_tasks)
@@ -293,7 +291,7 @@ async def run_evolution(
 
     # Save everything
     print(f"\n{'='*60}")
-    print(f"DONE | Seed: {seed_result['score']:.0%} → Best: {best_ever['score']:.0%}")
+    print(f"DONE | Seed: {seed_result['score']:.0%} -> Best: {best_ever['score']:.0%}")
     print(f"{'='*60}")
 
     (out / "best.txt").write_text(best_ever["text"], encoding="utf-8")

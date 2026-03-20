@@ -1,0 +1,135 @@
+Decoder
+- Terms are full binary trees over one binary op `*`; no assoc/comm.
+- `E1 ⇒ E2` means: every magma satisfying identity `E1` also satisfies `E2`.
+- You may substitute variables by arbitrary terms/variables uniformly.
+- Write `L(t),R(t)` for leftmost/rightmost leaf of term `t`.
+- Test magmas:
+  - left-zero `a*b=a` ⇒ every term = `L(t)`
+  - right-zero `a*b=b` ⇒ every term = `R(t)`
+  - constant `a*b=c` ⇒ every identity holds
+- If from `E1` you can derive `x≈y` for distinct variables, magma is 1-element, so any `E2` follows.
+
+Core rules / patterns
+
+1) Guaranteed collapse
+- If some substitution instance of `E1` has form `v = T` where `v` does not occur in `T`, then all magmas satisfying `E1` are trivial ⇒ TRUE for every `E2`.
+- Strong special case: if `E1` is `x = T` and by setting all variables except `x` equal to `x` you get `x = T(x)` with `T(x)` reducing to a term not containing some fresh variable, look again for a collapse instance.
+
+2) The big TRUE pattern the old sheet missed: absorb-then-replace
+For many laws `x = C[x]`, first substitute `z:=x` (or all vars := `x`) to get an idempotent-looking law, then plug that back into the original.
+Very common winning schema:
+- If `E1` gives `x = A*(x*x)` or `x = A*(B*(x*x))`, then setting all vars to `x` often yields `x = x*x`.
+- Once `x=x*x`, replace every `x*x` by `x` inside the original to get `x = term not containing x`, hence collapse.
+Examples:
+- `x = y*(y*(x*z))` with `z:=x`: `x = y*(y*(x*x))`; then all vars:=`x` gives `x=x*x`; hence original becomes `x=y*(y*x)`. Now `x:=y` gives `x=x*x` again and often quickly `x=y`.
+- `x = y*(x*((z*w)*z))`: set all vars:=`x` ⇒ `x=x*(x*x)`. Using that in the original can strip the internal `x` and force a variable-free-in-`x` RHS. Be alert: these are often TRUE.
+Moral: do not stop after “RHS still contains x”; try `all vars := x` to mine `x=x*x` or `x=x*(x*x)` and reuse it.
+
+3) Another common TRUE pattern: RHS independent of x after a simple substitution
+- If `E1` is `x = T(...,y,...)` with `x` absent from `T`, immediate collapse.
+- Less obvious but common: after one substitution such as `z:=x`, `w:=y`, `u:=y`, etc., the RHS may become a term whose `x`-dependence can be eliminated using a 1-variable consequence (`x=x*x`, `x=(x*x)*x`, etc.). Then collapse ⇒ TRUE.
+
+4) Product-law collapse trick
+For `x*y = T`:
+- Set `y:=x`. If this yields `x*x = T'`.
+- Then set all remaining vars:=`x`. If this gives a 1-variable law forcing `x*x=x` (or equivalent), substitute back into `x*y=T` to simplify RHS.
+- If RHS then loses dependence on `y` or can be made equal to a term in `x` only, compare `x*y` and `x*z` to derive `y=z`, hence trivial.
+This fixes cases like `x*y = (z*w)*(x*x)`: with all vars:=`x`, get `x*x=(x*x)*(x*x)`; often enough to deduce `x*x=x`, then `x*y=(z*w)*x`; further substitutions can force both projections equal and collapse. Do not dismiss product laws too early.
+
+5) Substitution-instance test for TRUE
+- If `E2` is a substitution instance of `E1`, TRUE.
+- Also if a very short chain of substitution instances gives `E2`, TRUE.
+- For variable-on-left laws `x = ...`, try to derive a simpler canonical consequence like:
+  - `x = y*(y*x)`
+  - `x = (y*x)*x`
+  - `x = y*(x*y)`
+  - `x = x*x`
+These often imply many target equations of the same “x absorbed at an end” type.
+
+6) Projection tests are only for FALSE, not for deciding TRUE
+- left-zero satisfies `s=t` iff `L(s)=L(t)`.
+- right-zero satisfies `s=t` iff `R(s)=R(t)`.
+- If some projection satisfies `E1` and falsifies `E2`, answer FALSE.
+- But if both projections fail on `E1`, that is weak evidence only; many TRUE cases above fail both projections.
+
+7) Strong FALSE heuristic still valid
+If `E1` has shape `x = T(x,...)` and `R(T)=x`, then right-zero satisfies `E1`.
+If `L(T)=x`, then left-zero satisfies `E1`.
+Likewise for `x*y=T`: left-zero works if `L(T)=x`, right-zero if `R(T)=y`.
+Then test `E2` there.
+This catches many FALSEs; keep it as first filter.
+
+8) But beware a huge opposite family: “all-nonx shell”
+If `E1` is `x = S` where the outer shell of `S` uses only non-`x` variables and `x` appears exactly once deep inside, these are often actually TRUE, not FALSE, because:
+- setting the deep tail variable to `x` often yields a 1-variable absorption law,
+- then substituting that back peels off the deep occurrence of `x`.
+Typical TRUE examples to remember:
+- `x = y*(y*(x*z))`
+- `x = y*(x*((z*w)*z))`
+- `x = (y*z)*((y*x)*w)`
+- `x = (((y*x)*y)*z)*x`
+- `x = (((y*y)*z)*w)*x`
+When a missed case resembles these, try “all vars:=x” before hunting countermodels.
+
+9) Handy 1-variable consequences
+From `E1`, always try:
+- all vars := `x`
+- all vars := `y`
+- set tail vars to `x`
+This may yield one of:
+- `x = x*x`
+- `x = x*(x*x)`
+- `x = (x*x)*x`
+- `x*x = x`
+- `x*x = (x*x)*(x*x)`
+These often combine with the original law to collapse.
+Heuristic: a nontrivial 1-variable consequence is much stronger than it looks.
+
+10) Using a 1-variable law back inside E1
+If you have deduced `x=x*x`, then in any occurrence of `...*(x*x)` replace by `...*x` after substituting uniformly.
+If you have `x=x*(x*x)`, then any subterm matching `x*(x*x)` can be replaced by `x`.
+Likewise for `(x*x)*x`.
+This “internal rewriting by consequence” is often what turns `x=C[x]` into `x = term-without-x`.
+
+11) Compare two instances to kill a variable
+For product laws or complicated absorptions, instantiate `E1` twice with different values of one variable:
+- If both give `x*y = U(x,...)` and `x*z = U(x,...)`, derive `x*y = x*z`.
+- Then set `x` suitably or combine with another instance to force `y=z`.
+Same idea for `x = U(y,...) = U(z,...)`.
+This is a standard path to triviality.
+
+12) Fast checklist for `x = RHS`
+A. Projection refutation? If yes, FALSE.
+B. Try `all vars:=x`. Did you get a useful 1-variable law?
+C. Try `tail vars := x` to create `x*x` at the deep occurrence.
+D. Rewrite RHS using that consequence; does `x` disappear from RHS? If yes, collapse ⇒ TRUE.
+E. If not, compare two instances with different auxiliaries to force equality of variables.
+This fixes many false FALSEs from the old model.
+
+13) Fast checklist for `x*y = RHS`
+A. Projection refutation first.
+B. Put `y:=x`; then all vars:=`x`.
+C. Seek `x*x=x` or similar.
+D. Rewrite RHS; if dependence on `y` disappears, compare `x*y` and `x*z`.
+E. If one side can be made independent of a variable that still appears on the other, collapse ⇒ TRUE.
+
+14) Selector / custom countermodels remain useful
+If no collapse pattern appears, try 2-element tables:
+- left-zero, right-zero
+- “almost left/right projection”
+- XOR / parity
+Use only to prove FALSE, never as reason to reject a promising collapse route.
+
+15) Decision bias update
+- Old bias “if not explicit collapse, say FALSE” is too strong.
+- New bias:
+  1. projection countermodel? ⇒ FALSE
+  2. else mine 1-variable consequences (`all vars:=x`)
+  3. if that yields absorption/idempotence and seems reusable inside `E1`, lean TRUE
+  4. only after failing these, prefer FALSE.
+
+16) Mini library of TRUE triggers
+- `x = A*(B*(x*C))` and setting `C:=x` gives `x = A*(B*(x*x))`; often TRUE.
+- `x = (A*B)*((A*x)*C)`; all vars:=`x` gives a strong 1-variable law; often TRUE.
+- `x = (((A*x)*A)*B)*x` or `x = (((A*A)*B)*C)*x`; often TRUE by deriving `x*x=x` or an equivalent absorber law.
+- If `E1` already implies a simpler absorb law like `x=y*(y*x)` or `x=(y*x)*x`, most same-flavor targets `x = shell-with-x-at-end` are likely TRUE.

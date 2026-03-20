@@ -1,5 +1,17 @@
 # Changelog
 
+## 2026-03-19 (session 3 — evolutionary optimizer running)
+- **Evolutionary optimizer working end-to-end** with gpt-4.1-mini as evaluator, gpt-5.4 as evolver
+- Key fix: same problem set within each generation for fair comparison (different between gens)
+- 100 problems per eval (80 normal + 20 hard), concurrency 50
+- **gen4_v0 = new current.txt** (5.7KB, avg ~71% on gpt-4.1-mini across 7 evals)
+- Seed (empty) 50% → Best 70% in 10 generations
+- gpt-4o-mini tested: says FALSE to everything with SAIR template, useless as evaluator
+- gpt-4.1-mini deployed and validated: non-reasoning, fast (~2s/call), uses cheatsheet
+- claude-haiku-4-5 connected via AnthropicFoundry SDK on Azure
+- SAIR template confirmed: cheatsheet goes inline in user message (Jinja2 from competition page)
+- Old cheatsheets (v5-v16) deleted, clean start
+
 ## 2026-03-19 (session 2 — robust eval, iteration & evolutionary optimizer)
 - **CRITICAL: 96.7% was inflated** (fixed seed, normal only). Real: ~84% mini, ~57% nano
 - Created eval/eval_robust.py — mixes normal+hard, random seeds, per-difficulty breakdown

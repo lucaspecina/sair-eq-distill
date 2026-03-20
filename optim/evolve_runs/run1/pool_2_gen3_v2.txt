@@ -1,0 +1,142 @@
+Decoder
+- Terms are binary trees with one binary operation `*`; no associativity/commutativity.
+- `E1 ⇒ E2` means: every magma satisfying identity `E1` also satisfies `E2`.
+- You may substitute variables by arbitrary terms/variables uniformly on both sides.
+- Important test magmas:
+  - **Left-zero**: `a*b=a` ⇒ every term = its **leftmost leaf**.
+  - **Right-zero**: `a*b=b` ⇒ every term = its **rightmost leaf**.
+  - **Constant**: `a*b=c` fixed.
+- If `E1` forces `x≈y`, then the magma is 1-element, so every `E2` follows.
+
+Core rules / patterns
+
+1) Safe collapse rule
+- If one side is exactly a variable `x` and `x` does not occur on the other side, then `E1` trivializes the magma ⇒ TRUE for any `E2`.
+- Likewise any substitution instance of `E1` with this form trivializes.
+
+2) Do NOT overuse “recursive/self-embedding ⇒ collapse”
+- Laws like `x = C[x]` often **do not** imply triviality.
+- In particular, be cautious when `x` still occurs on RHS and no simple substitution removes it.
+- New bias: if collapse is not explicit, do **not** jump to TRUE.
+
+3) Strong FALSE heuristic: projection countermodels first
+- Before fancy derivations, test `E1` in left-zero and right-zero.
+- If `E1` holds in one of them and `E2` fails there, answer FALSE.
+- This fixes many false TRUEs.
+
+4) How to test in left/right-zero quickly
+- Left-zero: replace every term by its leftmost variable.
+- Right-zero: replace every term by its rightmost variable.
+- Identity holds in:
+  - left-zero iff leftmost leaves of both sides match;
+  - right-zero iff rightmost leaves match.
+- Then test `E2` the same way.
+
+5) Huge source of FALSEs: `x = term-with-x` often holds in a projection magma
+- If RHS has leftmost leaf `x`, then `x = RHS` holds in left-zero.
+- If RHS has rightmost leaf `x`, then `x = RHS` holds in right-zero.
+- So many equations of form `x = complicated_term_containing_x` have easy nontrivial models.
+- To refute implication, check whether `E2` fails in that same projection magma.
+
+Examples of this pattern from failures:
+- `x = (y*y)*((y*y)*x)` holds in right-zero (rightmost leaf `x`).
+- `x = y*((z*z)*(z*x))` holds in right-zero.
+- `x = y*(z*(x*(y*x)))` holds in right-zero.
+- `x = y*(y*(x*x))` holds in right-zero.
+- `x = (y*(y*y))*(x*x)` holds in right-zero.
+- `x = (x*(x*x))*(y*y)` holds in left-zero.
+
+6) Product laws also often survive in projection magmas
+- For `x*y = T`, test leaf signatures:
+  - left-zero: LHS gives `x`; so `E1` holds iff leftmost leaf of `T` is `x`.
+  - right-zero: LHS gives `y`; so `E1` holds iff rightmost leaf of `T` is `y`.
+- If so, projection gives a nontrivial model candidate.
+
+Example:
+- `x*y = (y*y)*x` holds in neither left-zero (`x` vs `y`) nor right-zero (`y` vs `x`), so projection alone doesn’t decide.
+- But do not infer TRUE from that.
+
+7) If projection tests fail, try constant magma
+- In any constant magma every identity holds.
+- So constant magma cannot separate `E1` from `E2`, but reminds you that “complicated shape” alone proves nothing.
+
+8) Very useful nontrivial countermodel family: semiprojections / selectors
+Use 2 elements `{0,1}` and define simple tables such as:
+- left-zero `a*b=a`
+- right-zero `a*b=b`
+- first/second argument with exceptions
+- XOR on `{0,1}` if needed
+When projection models fail but `E1` still looks weak/non-collapsing, search for one of these.
+
+9) Better TRUE criterion: actual derivation, not vibe
+Say TRUE only if one of these holds:
+- direct collapse;
+- substitution instance gives direct collapse;
+- `E2` is a substitution instance of `E1`;
+- a short equational derivation from `E1` to `E2`;
+- or `E1` clearly implies `x≈y`.
+Otherwise prefer FALSE if any small countermodel is plausible.
+
+10) “Variable missing from one side” for product laws is NOT automatic collapse
+- `x*y = T(x,...)` with `y` absent from `T` does **not** by itself trivialize.
+- `x*x = y*(x*(z*w))` is not safely collapsing.
+- Need an actual argument yielding `x≈y` or enough independence to force all values equal.
+
+11) Fast signature checklist
+For each term record:
+- leftmost leaf `L(t)`
+- rightmost leaf `R(t)`
+Then:
+- left-zero satisfies `s=t` iff `L(s)=L(t)`
+- right-zero satisfies `s=t` iff `R(s)=R(t)`
+This is often enough to answer FALSE in seconds.
+
+12) Common failure pattern to avoid
+The old heuristic “x occurs only deep / quadratically / under extra variables, so repeated substitution probably collapses” is unreliable.
+Especially dangerous forms:
+- `x = A*(x*x)`
+- `x = A*(B*x)`
+- `x = A*(B*(x*C))`
+- `x = (x*A)*B`
+- `x*x = A*(x*B)`
+These often have nontrivial projection/selector models.
+
+13) Pattern library from bad cases
+Likely FALSE unless you can prove collapse:
+- `x = (y*y)*((y*y)*x)`  [right-zero model]
+- `x = (x*(x*x))*(y*y)`  [left-zero model]
+- `x = y*((z*z)*(z*x))`  [right-zero model]
+- `x = y*(z*(x*(y*x)))`  [right-zero model]
+- `x = y*(y*(x*x))`      [right-zero model]
+- `x = (y*(y*y))*(x*x)`  [right-zero model]
+These should make you actively look for FALSE, not TRUE.
+
+14) When projection refutes the target too
+If `E1` holds in right-zero because RHS rightmost leaf matches LHS, compute `E2` there:
+- `x = (y*((x*z)*w))*x` also holds in right-zero, so right-zero alone doesn’t separate.
+- But often left-zero or a simple selector will.
+So after one projection passes `E1`, test both projections and maybe a small custom table.
+
+15) Quick custom-table idea
+If `E1` has shape `x = F(x)` or `x*x = G(x,...)`, try operation:
+- `a*b = b` except maybe when `a=b`, or
+- `a*b = a` except maybe when `a=b`.
+These can make `x*x` differ from `x` and often separate equations involving `x*x` from those involving `x`.
+
+16) Substitution remains useful, but only for explicit gains
+- Set variables equal (`y:=x`, etc.) to simplify.
+- If this yields `x = term_without_x`, then TRUE.
+- If it only yields another recursive identity like `x = H(x)`, that is not enough.
+
+17) Decision order
+A. Direct collapse / substitution-to-collapse? ⇒ TRUE.
+B. Is `E2` a substitution instance of `E1`? ⇒ TRUE.
+C. Compute leftmost/rightmost signatures of `E1`; test left-zero/right-zero.
+D. If one satisfies `E1`, test `E2` there. If `E2` fails ⇒ FALSE.
+E. If both projections fail on `E1`, try a tiny selector / 2-element custom table.
+F. If still nothing and no real derivation, prefer FALSE over speculative TRUE.
+
+18) Golden warning
+- “Complicated + recursive + asymmetric” is not evidence of strength.
+- Hidden trivialization exists, but much rarer than projection-based nontrivial models for the bad cases above.
+- Therefore: no explicit collapse, no explicit derivation, and a projection/selector model seems plausible ⇒ usually FALSE.

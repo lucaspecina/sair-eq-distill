@@ -1,0 +1,112 @@
+Decoder
+- Terms use one binary operation * on a magma; equations are universal.
+- “Eq1 ⇒ Eq2” means: every magma satisfying Eq1 also satisfies Eq2.
+- Allowed: rename variables, substitute any terms for variables, and chain equalities.
+- Write L[t/x] for substituting term t for x in law L.
+- “Collapse” = all elements equal, so every equation follows.
+- Tiny countermodels for FALSE: left-zero (a*b=a), right-zero (a*b=b), projections, 2-element custom magmas.
+
+Core explosive rules
+
+1) DIRECT COLLAPSE
+- If Eq1 is x = T and x is absent from T, then collapse. Hence Eq1 implies every Eq2.
+- Do not miss this even when T is complicated.
+
+2) COMPOSITE-LEFT SURJECTIVITY
+- If Eq1 is A = T and some variable of A is absent from T, then all A-values with same remaining parameters are equal.
+- If every element can be represented as an A-value by substitution, collapse follows.
+- Important special cases:
+  - x*y = T(x,z,...) with y absent on RHS ⇒ for fixed x,z,... all x*y are equal; since any a = a*a = x*y under x:=a,y:=a, collapse.
+  - x*(y*z)=T(y,z,...) with x absent on RHS ⇒ for fixed y,z all x*(y*z) are equal; if any element can be written as x*(y*z), collapse.
+- Use this aggressively on laws like x*y=(y*x)*z: z is absent on LHS? no. But y is absent from final factor? check substitutions; often such laws force collapse after one bridge.
+
+3) DERIVE AN x-FREE TERM
+- If from Eq1 you can derive p = C where p is arbitrary and C does not depend on p, then collapse.
+- Common route: lone-variable law x=T(x,...) + one or two self-substitutions.
+
+High-value positive schemas
+
+4) LONE VARIABLE WITH DUPLICATED/REPEATED CONTEXT IS OFTEN STRONG
+- Laws x=T(x,...) are NOT automatically weak when RHS has:
+  - two x-occurrences,
+  - x*x,
+  - repeated non-x variable patterns like y*(...y...), (y*y), ((...z...)*z).
+- Try x:=T, then reapply Eq1 inside the new RHS to synchronize occurrences and eliminate x.
+
+5) IMPORTANT family: x = (A*x)*B or x = A*(x*B)
+- If A,B are x-free and A or B has repeated-variable structure, often one self-substitution yields an x-free term, hence collapse.
+- Examples the model missed:
+  - x=(y*((z*y)*x))*y  ⇒ TRUE
+  - x=(y*((z*x)*z))*w  ⇒ TRUE
+  - x=y*(x*((z*z)*w))  ⇒ often TRUE
+- Heuristic: if x is surrounded by repeated y/z on both sides, do not default FALSE.
+
+6) RHS independent of x after substitution
+- In x=T(x,params), look for a substitution making T x-free:
+  - substitute x by a term already of form T,
+  - specialize parameters to repeated patterns that let inner x be replaced by an x-free term from another instance.
+- Once x=C(params without x), collapse.
+
+7) COMPOSITE-LEFT laws of shape x*y = context(y,x,...)
+- These can be explosive, not weak.
+- Example pattern: x*y=(y*x)*z often collapses:
+  - substitute y:=x to get x*x=(x*x)*z, so every square is right-absorbing;
+  - then feed this back into x*y=(y*x)*z with z:=(y*x) or similar to show x*y=y*x and then all products equal / collapse.
+- Moral: equations swapping x,y then multiplying by a free z are dangerous; do not default FALSE.
+
+8) SQUARE/IDEMPOTENCE targets are NOT automatic
+- From a strong-looking duplicated law, do NOT assume x*y=(x*y)*(x*y).
+- Need an actual derivation. Many duplicated-context laws still fail in tiny models.
+- So “RHS duplicates variables” is only a prompt to try self-substitution, not a proof.
+
+Reliable negative heuristics
+
+9) To refute implication, first test Eq1 in projection models
+- Left-zero a*b=a:
+  - any term evaluates to its leftmost variable.
+- Right-zero a*b=b:
+  - any term evaluates to its rightmost variable.
+- Also test first-projection/second-projection on subterms mentally.
+- If Eq1 holds but Eq2 fails in one, implication is FALSE.
+
+10) Very useful quick semantic test: variable readout
+- In left-zero, an equation holds iff both sides have same leftmost variable.
+- In right-zero, it holds iff both sides have same rightmost variable.
+- This kills many false positives immediately.
+
+11) Composite-left ⇒ lone-variable target is often FALSE unless collapse
+- If Eq2 is x = U(y,z,...) or x = U with x absent or weakly present, and Eq1 is merely A=B without proven collapse, be skeptical.
+- Example: x*(y*z)=(z*z)*y does NOT by itself imply a universal lone-variable law x=...
+
+12) Lone-variable self-reference without a collapse mechanism is often weak
+- Plain x=U*x, x=x*U, x=A*(x*B) with no duplication/repetition usually does not imply much.
+- Need synchronization, repeated variables, or derivation of an x-free term.
+
+Problem-specific repair patterns from misses
+
+13) If Eq1 is x=((yy)z)w)z or any x=T(y,z,w,...) with x absent on RHS, it is immediate collapse. Therefore any Eq2 is TRUE.
+
+14) For x=(y*((z*y)*x))*y and relatives:
+- Repeated y around the x usually lets one self-substitute and use another renamed instance to remove x.
+- Treat as strong/collapsing, not weak.
+
+15) For x=(y*((z*x)*z))*w:
+- The z...z sandwich around x is a strong repeated context; try substituting x:=(z*x)*z or x:=T and compare two instances. Usually derives x-free behavior.
+
+16) For x=y*(x*((z*z)*w)):
+- Because z*z is duplicated and sits in a fixed right context around x, try x:=y*(x*((z*z)*w)); then replace the inner x again. These often synchronize to a common RHS and force collapse.
+
+17) For x*y=(y*x)*z:
+- Never dismiss quickly. Try:
+  - y:=x gives x*x=(x*x)*z.
+  - x:=y in another instance gives y*x=(x*y)*z.
+  - Combine with the original to shuttle between x*y and y*x through the same z-context.
+  - Such shuttle laws often imply all products are equal, hence many targets become TRUE.
+
+Decision checklist
+1. Is Eq1 x=T with x absent from T? If yes, TRUE.
+2. Is Eq1 A=T with a variable of A absent from T, and can any element be represented by A? If yes, collapse ⇒ TRUE.
+3. Is Eq1 x=T(x,...) with duplicated x, x*x, or repeated y/z contexts? Try 1–2 self-substitutions before saying FALSE.
+4. Can Eq2 be obtained by direct substitution/renaming from Eq1 or from a simple derived instance (especially square instances)? If yes, TRUE.
+5. Before any positive guess, test left-zero/right-zero readout. If Eq1 holds and Eq2 fails there, FALSE.
+6. If no collapse/synchronization route appears, lean FALSE.
