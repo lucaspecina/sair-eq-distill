@@ -152,10 +152,10 @@ a) Left-zero (LZ): a*b=a. Every term = leftmost variable.
    Eq holds iff leftmost(LHS) = leftmost(RHS). Catches 25% of FALSEs.
 b) Right-zero (RZ): a*b=b. Every term = rightmost variable.
    Eq holds iff rightmost(LHS) = rightmost(RHS). Catches 25% of FALSEs.
-c) Constant-zero (C0): a*b=0 on {0,1}. Every product = 0, but lone variables keep their value.
+c) Constant-zero (C0): a*b=0 on {{0,1}}. Every product = 0, but lone variables keep their value.
    Eq with lone var on one side fails if other side has a product (evaluates to 0, but var can be 1).
    Catches 19% of FALSEs not caught by LZ/RZ.
-d) XOR: a*b = (a+b) mod 2 on {0,1}. Catches 10% more FALSEs.
+d) XOR: a*b = (a+b) mod 2 on {{0,1}}. Catches 10% more FALSEs.
 
 Combined: these 4 magmas catch ~69% of all FALSE problems with zero errors.
 
