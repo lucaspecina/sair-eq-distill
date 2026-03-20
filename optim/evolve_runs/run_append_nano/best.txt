@@ -1,0 +1,239 @@
+Magma implication cheatsheet (`*` binary, no axioms)
+
+Goal: predict whether `Eq1 ⇒ Eq2`:
+every magma satisfying `Eq1` also satisfies `Eq2`.
+
+Terms
+- `LM(T)` = leftmost variable of term `T`.
+- `RM(T)` = rightmost variable of term `T`.
+- “lone-variable side” = one whole side is exactly a variable `v`.
+
+==================================================
+ZERO-ERROR RULES (use first)
+==================================================
+
+1. LONE VARIABLE ABSENT = TRUE
+- If Eq1 is `v = T` or `T = v` and `v` does NOT occur anywhere in `T`,
+  then `Eq1 ⇒ Eq2` for EVERY Eq2.
+- This is absolute. Stop immediately: TRUE.
+
+2. LZ/RZ COUNTEREXAMPLE = FALSE
+- Left-zero magma (LZ): `a*b=a`, so every term evaluates to its LEFTMOST variable.
+  - Equation `A=B` holds in LZ iff `LM(A)=LM(B)`.
+- Right-zero magma (RZ): `a*b=b`, so every term evaluates to its RIGHTMOST variable.
+  - Equation `A=B` holds in RZ iff `RM(A)=RM(B)`.
+- If Eq1 holds in LZ but Eq2 fails in LZ, then implication is FALSE.
+- If Eq1 holds in RZ but Eq2 fails in RZ, then implication is FALSE.
+- These are exact countermodels, not heuristics.
+
+Fast check:
+- LZ false test: `LM(Eq1L)=LM(Eq1R)` and `LM(Eq2L)≠LM(Eq2R)` ⇒ FALSE.
+- RZ false test: `RM(Eq1L)=RM(Eq1R)` and `RM(Eq2L)≠RM(Eq2R)` ⇒ FALSE.
+
+==================================================
+SAFE TRUE PATTERNS
+==================================================
+
+3. DIRECT INSTANCE / RENAMING = TRUE
+- If Eq2 is obtained from Eq1 by a uniform substitution of variables by terms
+  (renaming is the special case variable→variable), then TRUE.
+- Must preserve the whole shape of Eq1 on both sides after one uniform map.
+- Example: from `x = x*(y*z)`, substitute `x:=u*v`, `y:=w`, `z:=w`.
+
+4. TRANSPORT FROM A SELF-REFERENTIAL VARIABLE LAW = TRUE
+- If Eq1 is `x = T(x, other vars)` (or symmetrically `T(x,...)=x`),
+  then for any term `P`, substituting `x:=P` gives `P = T(P, ...)`.
+- Therefore Eq2 is TRUE if it is exactly that transported pattern
+  (possibly with variable renaming / substitution on the other variables too).
+- Important: the SAME term `P` must replace every occurrence of `x` in Eq1.
+
+5. EXPLICIT CHAIN ONLY
+- You may use Eq1 multiple times only if you can make a literal equality chain:
+  `A = R`, `R = B`, hence `A = B`.
+- One whole side must match exactly at each step.
+- If you cannot write the chain cleanly, do NOT assume TRUE.
+
+==================================================
+VERY IMPORTANT UPGRADE: ABSORPTION / COLLAPSE FROM SELF-REFERENCE
+==================================================
+
+6. RIGHT-SELF-EMBEDDING OF `x` OFTEN FORCES UNIVERSALITY
+If Eq1 is `x = T` where:
+- `x` occurs somewhere in `T`, and
+- the rightmost variable of `T` is NOT `x`,
+then Eq1 is extremely strong: repeated substitution lets `x` absorb arbitrary tails.
+In practice, predict TRUE for any Eq2 unless Rule 2 already gave FALSE.
+
+Canonical examples:
+- `x = y*((x*x)*z)`  (RM is `z`, not `x`)  ⇒ usually universal ⇒ TRUE.
+- `x = x*(y*(x*z))`  (RM is `z`)           ⇒ usually universal ⇒ TRUE.
+- `x = x*(((y*x)*z)*w)` (RM is `w`)        ⇒ usually universal ⇒ TRUE.
+
+7. LEFT-SELF-EMBEDDING OF `x` OFTEN FORCES UNIVERSALITY
+Dually, if Eq1 is `x = T` where:
+- `x` occurs in `T`, and
+- the leftmost variable of `T` is NOT `x`,
+then Eq1 is also extremely strong.
+Predict TRUE for any Eq2 unless Rule 2 already gave FALSE.
+
+Canonical examples:
+- `x = (y*x)*((y*y)*z)`  (LM is `y`, not `x`) ⇒ usually universal ⇒ TRUE.
+- `x = y*(z*(y*w))` is already Rule 1; this rule is for when `x` still occurs inside.
+
+Practical summary:
+- Self-referential `x = T(x,...)` is NOT always weak.
+- If `x` is present inside but NOT at one boundary (leftmost or rightmost),
+  Eq1 is often already enough to force almost everything.
+- This fixes many false negatives from the old sheet.
+
+==================================================
+FALSE-LEANING PATTERNS
+==================================================
+
+8. NO LONE-VARIABLE SIDE IN Eq1 ⇒ LEAN FALSE
+- If Eq1 is composite = composite, implication is usually FALSE
+  unless Eq2 is an obvious substitution instance or an explicit chain consequence.
+- Still run Rule 2 first.
+
+9. BOUNDARY-MATCHED SELF-REFERENCE IS WEAKER
+- If Eq1 is `x = T(x,...)` and BOTH boundary variables of `T` are `x`
+  (especially LM=`x` and RM=`x`, or the law is a very close fixed-point schema),
+  do NOT assume collapse.
+- Then only say TRUE for direct transport / direct instance / explicit chain.
+- Otherwise lean FALSE.
+
+10. MANY FRESH VARIABLES IN Eq2 ⇒ LEAN FALSE
+- If Eq2 contains 2 or more variables not appearing in Eq1, prefer FALSE,
+  unless Rule 1 applies or Rules 6/7 suggest universality.
+
+==================================================
+ANTI-MISTAKE WARNINGS
+==================================================
+
+11. DO NOT TEST RULE 1 ON Eq2
+- Rule 1 depends ONLY on Eq1.
+- If Eq1 satisfies Rule 1, answer TRUE immediately, regardless of Eq2’s content.
+
+12. SHARED SUBTERM IS NOT ENOUGH
+- Two equations do not combine just because they “look similar”.
+- Need a full substitution instance or a literal equality chain.
+
+13. VARIABLE DISAPPEARANCE INSIDE A COMPOSITE IS NOT RULE 1
+- Rule 1 requires an ENTIRE side to be exactly one variable absent from the other side.
+- Missing variables inside a larger term do not by themselves imply collapse.
+
+==================================================
+DECISION PROCEDURE
+==================================================
+
+1. Check Rule 1 on Eq1.
+   - If `v = T` or `T = v` with `v` absent from `T` ⇒ TRUE.
+
+2. Check Rule 2.
+   - LZ counterexample or RZ counterexample ⇒ FALSE.
+
+3. Check direct instance / renaming.
+   - If Eq2 is a uniform substitution instance of Eq1 ⇒ TRUE.
+
+4. Check direct transport from a self-referential variable law.
+   - If Eq2 is exactly Eq1 with `x` uniformly replaced by one term ⇒ TRUE.
+
+5. Check strong self-reference universality.
+   - If Eq1 is `x = T(x,...)` and `LM(T)≠x` OR `RM(T)≠x` ⇒ strongly prefer TRUE.
+   - Especially if Eq2 also has lone-variable side `x = ...` or is otherwise unrelated.
+
+6. Otherwise:
+   - If Eq1 has no lone-variable side ⇒ usually FALSE.
+   - If Eq1 is self-referential but boundary-matched (`LM(T)=x` and `RM(T)=x`) and Eq2 is not a direct transport/instance ⇒ usually FALSE.
+   - If Eq2 has 2+ fresh variables ⇒ strongly FALSE.
+
+Compact reminders
+- `x = T(no x)` => ALWAYS TRUE.
+- LZ = leftmost variable; RZ = rightmost variable.
+- Direct substitution instance => TRUE.
+- Self-reference with `x` not on at least one boundary of RHS => often universal => prefer TRUE.
+- Composite=composite Eq1 => usually FALSE.
+- When uncertain after all checks, prefer FALSE unless Rules 6/7 fire.
+
+## FALSE-FIRST SAFETY CHECKS (append this after the existing rules)
+
+When unsure, **try to kill the implication quickly** with the 4 tiny counterexample magmas before searching for a proof. These catch many FALSE cases.
+
+### 1) Fast counterexample battery
+Test **Eq1 true + Eq2 false** in each:
+
+- **Left-zero (LZ):** `a*b=a`  
+  Any term = **leftmost variable**.
+- **Right-zero (RZ):** `a*b=b`  
+  Any term = **rightmost variable**.
+- **Constant-zero on {0,1}:** `a*b=0`  
+  Any compound product = `0`; a lone variable stays that variable.
+- **XOR on {0,1}:** `a*b=a+b mod 2`  
+  Any term = parity sum of its variables.
+
+If one model makes Eq1 an identity but Eq2 not an identity, verdict is **FALSE**.
+
+### 2) How to evaluate quickly in the 4 magmas
+For each equation, reduce both sides:
+
+- **LZ:** replace each side by its leftmost variable.
+- **RZ:** replace each side by its rightmost variable.
+- **Constant-zero:**  
+  - variable alone → that variable  
+  - anything with `*` at top level or inside a product → `0`
+- **XOR:** count occurrences mod 2.  
+  Example: `(x*(y*x))` becomes `x+y+x = y`.
+
+Then:
+- Eq is an identity iff the reduced left and right sides are the same expression in that model.
+
+### 3) Very common FALSE pattern: Eq1 is weak in a projection magma
+If Eq1 collapses to a tautology in LZ or RZ, but Eq2 collapses to a non-tautology there, implication is **FALSE**.
+
+Typical cases:
+- **RZ trap:**  
+  `x = ...x` or `x = ...` where Eq1’s RHS rightmost variable is `x`, so Eq1 is true in RZ.  
+  But Eq2 may reduce to something like `y=z`, `y=x`, `x=z`, etc. → not identity.
+- **LZ trap:**  
+  `x = x...` or Eq1 whose RHS leftmost variable is `x`, so Eq1 is true in LZ.  
+  But Eq2 may reduce to `x=y`, `x=z`, etc. → not identity.
+
+This is the main source of false positives: **do not treat “self-reference involving x” as evidence of truth by itself.**
+
+### 4) Self-referential equations: what actually matters
+For equations like `x = T`:
+
+- In **RZ**, it only cares whether the **rightmost variable of `T` is `x`**.
+- In **LZ**, it only cares whether the **leftmost variable of `T` is `x`**.
+- In **constant-zero**, `x=T` is usually **not** an identity if `T` is a nontrivial product, since it becomes `x=0`.
+- In **XOR**, `x=T` means the parity form of `T` must equal `x`.
+
+So a self-referential Eq1 is **not automatically strong**. It may hold in a very degenerate way while Eq2 still fails.
+
+### 5) Extra trap list
+Before answering TRUE, explicitly check these:
+
+- **Projection mismatch:** Eq1 true in LZ/RZ only because of leftmost/rightmost coincidence; Eq2 reduces to a different variable equality.
+- **Compound-vs-variable in constant-zero:**  
+  Eq1 may become `x=0` or `y=0` and fail immediately; Eq2 may also collapse oddly. Check.
+- **Parity mismatch in XOR:**  
+  Eq1 and Eq2 may have different variable multisets mod 2. If Eq1 reduces to a valid XOR identity but Eq2 does not, implication is FALSE.
+
+### 6) Practical decision rule
+If no proof is obvious, do this in order:
+
+1. Check **LZ**
+2. Check **RZ**
+3. Check **constant-zero**
+
+## NEW SECTION: High-yield FALSE checks and self-reference traps
+
+When unsure, **try to falsify first**. The 4 tiny magmas below catch many FALSE cases very cheaply:
+
+### A. Fast counterexample battery
+For each equation, reduce both sides in these magmas:
+
+- **LZ (left-zero)**: `a*b=a`  
+  Any product term becomes its **leftmost variable**.
+- **RZ (right-zero)**: `a*b=b`  
+  Any product term becomes its **rightmost variable**.
