@@ -1,113 +1,156 @@
-Decoder
-- Law / identity: universally quantified equation between binary terms built from variables and one operation *.
-- Magma: arbitrary set with one binary operation; assume no associativity, cancellation, etc.
-- “Eq1 ⇒ Eq2” means: every magma satisfying Eq1 also satisfies Eq2.
-- Allowed moves: rename variables, substitute variables by arbitrary terms, instantiate repeatedly, and chain equalities.
-- Key method: if one law lets you prove the magma is one-element (all terms equal), then every Eq2 follows.
+Magma implication cheatsheet (`*` binary, no axioms)
 
-Core explosive rule
-1. TOTAL COLLAPSE from a lone variable with no self-occurrence:
-- If Eq1 has form v = T and v does NOT occur in T, then Eq1 implies every law.
-- Proof schema: for any terms P,Q, instantiate v:=P and parameters in T so RHS becomes one common term R; then P=R and Q=R, hence P=Q.
-- Symmetric if T = v with v absent from T.
-- IMPORTANT: this is much stronger than the old “fixed-point” cases. If the lone-variable side variable is absent from the other side, it is ALWAYS explosive.
+Goal: predict whether `Eq1 ⇒ Eq2`:
+every magma satisfying `Eq1` also satisfies `Eq2`.
 
-Super-important correction
-- Do NOT hesitate when Eq1 is x = complicated_term_not_containing_x.
-- That is already enough for total collapse, even if:
-  - the RHS has many other variables,
-  - the RHS is very deep,
-  - Eq2 looks unrelated.
-- Typical TRUE pattern:
-  - x = y*(y*(z*(y*y)))
-  - x = (y*(z*(z*y)))*w
-  - x = y*(y*((y*y)*y))
-These all force one-element magmas.
+Terms
+- `LM(T)` = leftmost variable of term `T`.
+- `RM(T)` = rightmost variable of term `T`.
+- “lone-variable side” = one whole side is exactly a variable `v`.
 
-How to use the collapse rule concretely
-- If Eq1 is x = T(y,z,w,...) with x absent from T:
-  - For any variables a,b, instantiate x:=a with the same chosen values of y,z,w,... ; get a = R.
-  - Instantiate x:=b with the same chosen values; get b = R.
-  - Hence a=b.
-- Once all variables are equal, every identity holds.
+==================================================
+ZERO-ERROR RULES (use first)
+==================================================
 
-Direct consequence patterns
-2. Direct substitution / renaming
-- If Eq2 is a substitution instance or variable-renaming of Eq1, then TRUE.
-- Also TRUE if one or two obvious substitution+transitivity steps derive Eq2.
+1. LONE VARIABLE ABSENT = TRUE
+- If Eq1 is `v = T` or `T = v` and `v` does NOT occur anywhere in `T`,
+  then `Eq1 ⇒ Eq2` for EVERY Eq2.
+- This is absolute. Stop immediately: TRUE.
 
-3. Fixed-point transport
-- From x = F(x,params), infer P = F(P,params) for any term P by substituting x:=P.
-- Useful only if Eq2 has exactly that transported shape.
+2. LZ/RZ COUNTEREXAMPLE = FALSE
+- Left-zero magma (LZ): `a*b=a`, so every term evaluates to its LEFTMOST variable.
+  - Equation `A=B` holds in LZ iff `LM(A)=LM(B)`.
+- Right-zero magma (RZ): `a*b=b`, so every term evaluates to its RIGHTMOST variable.
+  - Equation `A=B` holds in RZ iff `RM(A)=RM(B)`.
+- If Eq1 holds in LZ but Eq2 fails in LZ, then implication is FALSE.
+- If Eq1 holds in RZ but Eq2 fails in RZ, then implication is FALSE.
+- These are exact countermodels, not heuristics.
 
-Safe synchronization
-4. Synchronize only by literally making one side identical
-- From two instances of Eq1, if you can force the RHSs to be the same term under chosen substitutions, then the LHSs are equal.
-- Or if you can force the LHSs identical, then the RHSs are equal.
-- This is the main way self-referential laws can still become strong.
+Fast check:
+- LZ false test: `LM(Eq1L)=LM(Eq1R)` and `LM(Eq2L)≠LM(Eq2R)` ⇒ FALSE.
+- RZ false test: `RM(Eq1L)=RM(Eq1R)` and `RM(Eq2L)≠RM(Eq2R)` ⇒ FALSE.
 
-New strong self-reference pattern to remember
-5. If Eq1 is x = A*(x*B) or x = A*(B*(x*C)) etc., sometimes substitute for x using Eq1 itself and then compare with another instance to eliminate the inner x. Do this only when an explicit chain exists.
-- But if x is absent from RHS, no such work is needed: collapse is immediate.
+==================================================
+SAFE TRUE PATTERNS
+==================================================
 
-Main anti-overgeneralization rules
-6. If neither side is a lone variable, default FALSE unless Eq2 is a clear instance/consequence.
-- Composite = composite laws are usually weak.
+3. DIRECT INSTANCE / RENAMING = TRUE
+- If Eq2 is obtained from Eq1 by a uniform substitution of variables by terms
+  (renaming is the special case variable→variable), then TRUE.
+- Must preserve the whole shape of Eq1 on both sides after one uniform map.
+- Example: from `x = x*(y*z)`, substitute `x:=u*v`, `y:=w`, `z:=w`.
 
-7. If Eq1 is x = T(x,...) with x present on RHS, that is NOT automatic collapse.
-- Examples: x = x*U, x = U*x, x = (x*B)*w, x = y*(y*(x*z)), x = (y*y)*(x*(y*z)).
-- Treat as rewrite/fixed-point only unless you can derive a variable-free-of-x term equal to x, or synchronize explicitly.
+4. TRANSPORT FROM A SELF-REFERENTIAL VARIABLE LAW = TRUE
+- If Eq1 is `x = T(x, other vars)` (or symmetrically `T(x,...)=x`),
+  then for any term `P`, substituting `x:=P` gives `P = T(P, ...)`.
+- Therefore Eq2 is TRUE if it is exactly that transported pattern
+  (possibly with variable renaming / substitution on the other variables too).
+- Important: the SAME term `P` must replace every occurrence of `x` in Eq1.
 
-8. “A variable disappears from one side” is weak unless the whole opposite side is a lone variable absent from the other side.
-- Bad inference: from x*y = R(x,z) conclude all products x*y are equal. Usually false.
+5. EXPLICIT CHAIN ONLY
+- You may use Eq1 multiple times only if you can make a literal equality chain:
+  `A = R`, `R = B`, hence `A = B`.
+- One whole side must match exactly at each step.
+- If you cannot write the chain cleanly, do NOT assume TRUE.
 
-9. Balanced equations with real structure on both sides usually do NOT imply arbitrary lone-variable targets.
+==================================================
+VERY IMPORTANT UPGRADE: ABSORPTION / COLLAPSE FROM SELF-REFERENCE
+==================================================
 
-Failure-pattern fixes from past mistakes
-10. TRUE cases the model missed:
-- x*y = y*((z*w)*w)  can still imply strong laws if Eq2 is obtained by a direct substitution / synchronization. Do not auto-reject composite-left laws; check for easy instance first.
-- Any Eq1 of form x = T with x absent from T is explosive. This includes:
-  - x = (y*(z*(z*y)))*w
-  - x = y*(y*(z*(y*y)))
-  - x = y*(y*((y*y)*y))
-- Do NOT label these “not explosive” just because RHS is composite.
+6. RIGHT-SELF-EMBEDDING OF `x` OFTEN FORCES UNIVERSALITY
+If Eq1 is `x = T` where:
+- `x` occurs somewhere in `T`, and
+- the rightmost variable of `T` is NOT `x`,
+then Eq1 is extremely strong: repeated substitution lets `x` absorb arbitrary tails.
+In practice, predict TRUE for any Eq2 unless Rule 2 already gave FALSE.
 
-11. Self-referential TRUE cases are harder:
-- x = y*(((x*y)*x)*z)
-- x = y*(y*(x*z))
-- x = (y*y)*(x*(y*z))
-- x = x*(((y*z)*z)*z)
-These are NOT automatically TRUE/FALSE. You must try:
-  a) substitute Eq1 into the inner x,
-  b) instantiate with special replacements (x:=y, y:=x, etc.),
-  c) synchronize repeated RHS/LHS terms,
-  d) see whether Eq2 is a transported instance.
-- But absent a concrete derivation, still lean FALSE.
+Canonical examples:
+- `x = y*((x*x)*z)`  (RM is `z`, not `x`)  ⇒ usually universal ⇒ TRUE.
+- `x = x*(y*(x*z))`  (RM is `z`)           ⇒ usually universal ⇒ TRUE.
+- `x = x*(((y*x)*z)*w)` (RM is `w`)        ⇒ usually universal ⇒ TRUE.
 
-Model-finding heuristics for FALSE
-12. Try tiny magmas:
-- Left-zero: a*b=a
-- Right-zero: a*b=b
-- Constant: a*b=c
-Quick term evaluation:
-- In left-zero, every term = its leftmost variable.
-- In right-zero, every term = its rightmost variable.
-If Eq1 holds but Eq2 fails in one, implication is FALSE.
+7. LEFT-SELF-EMBEDDING OF `x` OFTEN FORCES UNIVERSALITY
+Dually, if Eq1 is `x = T` where:
+- `x` occurs in `T`, and
+- the leftmost variable of `T` is NOT `x`,
+then Eq1 is also extremely strong.
+Predict TRUE for any Eq2 unless Rule 2 already gave FALSE.
 
-Decision checklist
-1. Does Eq1 have a lone variable side v?
-   - No: usually FALSE unless Eq2 is an obvious instance/consequence.
-   - Yes: continue.
-2. Does v occur on the other side?
-   - No: TOTAL COLLAPSE ⇒ TRUE for every Eq2.
-   - Yes: only fixed-point/rewrite so far; continue cautiously.
-3. Is Eq2 a direct substitution/renaming/one-step consequence of Eq1?
-   - Yes: TRUE.
-4. Can two instances be explicitly synchronized to force identical RHS or LHS?
-   - Yes: use that.
-5. Otherwise, especially for balanced or self-referential laws, prefer FALSE.
+Canonical examples:
+- `x = (y*x)*((y*y)*z)`  (LM is `y`, not `x`) ⇒ usually universal ⇒ TRUE.
+- `x = y*(z*(y*w))` is already Rule 1; this rule is for when `x` still occurs inside.
 
-Bottom line
-- Most important rule: lone variable = term not containing that variable ⇒ one-element magma ⇒ every target law TRUE.
-- Keep caution only for x = T(x,...) or composite/composite laws.
-- Don’t underuse the explosive rule; don’t overuse weaker “missing variable” patterns.
+Practical summary:
+- Self-referential `x = T(x,...)` is NOT always weak.
+- If `x` is present inside but NOT at one boundary (leftmost or rightmost),
+  Eq1 is often already enough to force almost everything.
+- This fixes many false negatives from the old sheet.
+
+==================================================
+FALSE-LEANING PATTERNS
+==================================================
+
+8. NO LONE-VARIABLE SIDE IN Eq1 ⇒ LEAN FALSE
+- If Eq1 is composite = composite, implication is usually FALSE
+  unless Eq2 is an obvious substitution instance or an explicit chain consequence.
+- Still run Rule 2 first.
+
+9. BOUNDARY-MATCHED SELF-REFERENCE IS WEAKER
+- If Eq1 is `x = T(x,...)` and BOTH boundary variables of `T` are `x`
+  (especially LM=`x` and RM=`x`, or the law is a very close fixed-point schema),
+  do NOT assume collapse.
+- Then only say TRUE for direct transport / direct instance / explicit chain.
+- Otherwise lean FALSE.
+
+10. MANY FRESH VARIABLES IN Eq2 ⇒ LEAN FALSE
+- If Eq2 contains 2 or more variables not appearing in Eq1, prefer FALSE,
+  unless Rule 1 applies or Rules 6/7 suggest universality.
+
+==================================================
+ANTI-MISTAKE WARNINGS
+==================================================
+
+11. DO NOT TEST RULE 1 ON Eq2
+- Rule 1 depends ONLY on Eq1.
+- If Eq1 satisfies Rule 1, answer TRUE immediately, regardless of Eq2’s content.
+
+12. SHARED SUBTERM IS NOT ENOUGH
+- Two equations do not combine just because they “look similar”.
+- Need a full substitution instance or a literal equality chain.
+
+13. VARIABLE DISAPPEARANCE INSIDE A COMPOSITE IS NOT RULE 1
+- Rule 1 requires an ENTIRE side to be exactly one variable absent from the other side.
+- Missing variables inside a larger term do not by themselves imply collapse.
+
+==================================================
+DECISION PROCEDURE
+==================================================
+
+1. Check Rule 1 on Eq1.
+   - If `v = T` or `T = v` with `v` absent from `T` ⇒ TRUE.
+
+2. Check Rule 2.
+   - LZ counterexample or RZ counterexample ⇒ FALSE.
+
+3. Check direct instance / renaming.
+   - If Eq2 is a uniform substitution instance of Eq1 ⇒ TRUE.
+
+4. Check direct transport from a self-referential variable law.
+   - If Eq2 is exactly Eq1 with `x` uniformly replaced by one term ⇒ TRUE.
+
+5. Check strong self-reference universality.
+   - If Eq1 is `x = T(x,...)` and `LM(T)≠x` OR `RM(T)≠x` ⇒ strongly prefer TRUE.
+   - Especially if Eq2 also has lone-variable side `x = ...` or is otherwise unrelated.
+
+6. Otherwise:
+   - If Eq1 has no lone-variable side ⇒ usually FALSE.
+   - If Eq1 is self-referential but boundary-matched (`LM(T)=x` and `RM(T)=x`) and Eq2 is not a direct transport/instance ⇒ usually FALSE.
+   - If Eq2 has 2+ fresh variables ⇒ strongly FALSE.
+
+Compact reminders
+- `x = T(no x)` => ALWAYS TRUE.
+- LZ = leftmost variable; RZ = rightmost variable.
+- Direct substitution instance => TRUE.
+- Self-reference with `x` not on at least one boundary of RHS => often universal => prefer TRUE.
+- Composite=composite Eq1 => usually FALSE.
+- When uncertain after all checks, prefer FALSE unless Rules 6/7 fire.
