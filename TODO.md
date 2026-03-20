@@ -1,43 +1,33 @@
 # TODO
 
-## PLAN DE ACCIÓN — Sesión 3
+## PLAN DE ACCIÓN — Sesión 4
 
-### Contexto
+### Estado actual (2026-03-20)
 - Deadline: 20 abril 2026 (~1 mes)
-- Mejor cheatsheet: v15 (74.7% cross-model avg, +5.3 pts sobre v6)
-- Benchmark público: 55-60%. Nuestro nano+v15: 65.6%. Estamos arriba pero sin validar en playground.
-- El cheatsheet actual es un tutorial de comportamiento. El ganador será conocimiento matemático comprimido.
+- current.txt: v2 gen3_x1, 6.7KB, evolved from empty seed
+- Scores: 67% on gpt-4.1-mini (1200 probs), ~82% on nano (50 probs)
+- Leader (Kendon): 93.3% normal, 79.9% hard
+- Gap: ~11 pts on normal, ~26 pts on hard
+- Deterministic rule floor: 72.4% (lone-var + LZ/RZ), extendable to ~78% (+ C0 + XOR)
 
-### Fase 1: Correr el evolutionary optimizer (~1-2 horas)
-1. Verificar que gpt-5.4 funciona como evolver (test rápido)
-2. Correr `optim/evolve_cheatsheet.py` con v15 como seed, 10 generaciones
-   - nano = alumno (toma examen, 20 problemas por eval, max paralelismo)
-   - gpt-5.4 = profesor (ve errores crudos del alumno, mejora cheatsheet)
-   - Cada gen: evaluar parents → generar variantes → evaluar variantes → seleccionar
-   - Todo en paralelo, seeds random frescos cada eval
-3. Analizar resultados: ¿mejoró? ¿qué tipo de cheatsheet genera gpt-5.4?
-4. Si mejoró: guardar best como nuevo current.txt
+### Immediate priorities
+1. [ ] Run nano optimizer with C0/XOR knowledge — see if evolver can improve
+2. [ ] Validate best cheatsheet on SAIR playground (10 credits/day)
+3. [ ] Add constant-zero and XOR counterexample procedures to cheatsheet via evolution
+4. [ ] Test cheatsheet on gpt-5-mini (reasoning, strong) — find version that doesn't hurt
 
-### Fase 2: Validar en playground SAIR (~10 min)
-5. Subir el mejor cheatsheet al playground de SAIR
-6. Usar 1-2 créditos (de 10/día) para validar score real
-7. Comparar score playground vs score local → calibrar nuestro eval
+### Medium-term
+5. [ ] Extract patterns from full 22M dataset for harder cases
+6. [ ] Implement partial mutation (modify sections, not full rewrite)
+7. [ ] Try GEPA-style Pareto front for maintaining diverse cheatsheets
+8. [ ] Investigate "free-form prompt template" option in competition
+9. [ ] Test on nano with full 1200 problems (slow but definitive)
 
-### Fase 3: Iterar según resultados
-- Si el optimizer evoluciona bien → correr más generaciones, explorar
-- Si el optimizer se estanca → analizar por qué, ajustar el prompt del evolver
-- Si el playground score es muy diferente al local → recalibrar evaluación
-- Explorar si podemos extraer más patrones del dataset de 22M para el payload
-
-### Fase 4: Líneas futuras (si hay tiempo)
-- Diffusion-based optimization
-- Extraer patterns del dataset completo de 22M implicaciones
-- Modular cheatsheet (secciones independientemente evolucionables)
-
-## Pending — Research
-- [ ] Analyze hard problems in detail — what specifically fails?
-- [ ] Explore "duality" rule: if A→B then dual(A)→dual(B)
-- [ ] Investigate Stone pairing fingerprints for equation clustering
+### Research lines
+- [ ] Explore duality rule: if A→B then dual(A)→dual(B)
+- [ ] Investigate more 2-element magma counterexamples (16 tables analyzed)
+- [ ] Study what Kendon's 93% approach might be doing differently
+- [ ] Look into programmatic rule extraction vs LLM evolution
 
 ## Done
 - [x] Investigate competition and resources — 2026-03-18
@@ -65,3 +55,14 @@
 - [x] Codex strategy reviews (3 sessions) — 2026-03-19
 - [x] Evolutionary optimizer designed (AlphaEvolve-inspired) — 2026-03-19
 - [x] Research synthesis session 2 — 2026-03-19
+- [x] Evolutionary optimizer v1 (evolve_cheatsheet.py) — 2026-03-19
+- [x] Evolutionary optimizer v2 with crossover (evolve_v2.py) — 2026-03-20
+- [x] gpt-4.1-mini deployed and validated as fast evaluator — 2026-03-20
+- [x] claude-haiku-4-5 connected via AnthropicFoundry SDK — 2026-03-20
+- [x] SAIR template confirmed (cheatsheet inline in user message) — 2026-03-20
+- [x] Data analysis: 2 perfect rules (lone-var-absent, LZ/RZ) = 72.4% floor — 2026-03-20
+- [x] Data analysis: C0 + XOR catch 178 more FALSEs = 78% floor — 2026-03-20
+- [x] Full 1200-problem eval: 67% on gpt-4.1-mini, ~82% on nano — 2026-03-20
+- [x] Transfer test: cheatsheet helps 4.1-mini/nano, hurts mini — 2026-03-20
+- [x] Paper research: GEPA, EvoPrompt, competition intel — 2026-03-20
+- [x] Research synthesis session 3 — 2026-03-20
