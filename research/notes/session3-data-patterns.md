@@ -90,3 +90,13 @@ The cheatsheet should:
 3. Give heuristics for "lone var present" (the 45/55 split)
 4. Extra vars in Eq2: if 2+, lean FALSE
 5. NOT over-assert rules for self-referential equations
+
+## Deterministic Classifier Baseline
+
+Using just Rule 1 (lone-var-absent=TRUE) + Rule 2 (LZ/RZ=FALSE) + default FALSE:
+- Normal: 743/1000 = 74.3%
+- Hard: 126/200 = 63.0%
+- **Combined: 869/1200 = 72.4%**
+
+Remaining gap to 93.3% (leader) = 257 TRUEs + 74 FALSEs not covered by rules.
+These require actual mathematical reasoning about self-referential equations.
