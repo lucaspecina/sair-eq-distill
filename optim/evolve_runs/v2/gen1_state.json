@@ -1,0 +1,31 @@
+{
+  "gen": 1,
+  "pool": [
+    {
+      "name": "gen1_v1",
+      "score": 0.85,
+      "size": 8729
+    },
+    {
+      "name": "gen1_v0",
+      "score": 0.76,
+      "size": 8268
+    },
+    {
+      "name": "gen1_v2",
+      "score": 0.76,
+      "size": 7570
+    },
+    {
+      "name": "seed",
+      "score": 0.72,
+      "size": 7126
+    }
+  ],
+  "best": {
+    "name": "gen1_v1",
+    "score": 0.85
+  },
+  "api_calls": 953,
+  "elapsed_s": 819.9
+}

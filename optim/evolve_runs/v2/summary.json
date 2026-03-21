@@ -1,0 +1,30 @@
+{
+  "seed_score": 0.72,
+  "best_score": 0.865,
+  "best_name": "gen2_v1",
+  "generations": 2,
+  "api_calls": 1706,
+  "total_seconds": 2187.9,
+  "pool_final": [
+    {
+      "name": "gen2_v1",
+      "score": 0.865
+    },
+    {
+      "name": "gen1_v1",
+      "score": 0.85
+    },
+    {
+      "name": "gen2_v0",
+      "score": 0.785
+    },
+    {
+      "name": "gen1_v0",
+      "score": 0.76
+    },
+    {
+      "name": "gen1_v2",
+      "score": 0.76
+    }
+  ]
+}

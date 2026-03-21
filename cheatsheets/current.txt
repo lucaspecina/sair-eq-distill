@@ -2,175 +2,281 @@ Magma implication cheatsheet: does Eq1 => Eq2?
 (every magma satisfying Eq1 also satisfies Eq2)
 
 ================================================================
-***CRITICAL*** NODE 1 — CHECK THIS FIRST BEFORE ANYTHING ELSE
+NODE 1 — CHECK THIS FIRST
 ================================================================
 
-Is Eq1 of form "v = T" (or "T = v") where v is a single variable
-that does NOT appear ANYWHERE in T?
-  => Answer TRUE immediately. ZERO exceptions. Do NOT check magmas.
+If Eq1 is exactly
 
-Examples of Node 1 matches (all TRUE):
-  x = y*(z*w)           — x absent from RHS => TRUE
-  x = y*((z*(z*w))*z)   — x absent from RHS => TRUE
-  x = (y*z)*(y*(w*z))   — x absent from RHS => TRUE
-  y*((z*(z*w))*z) = x   — x absent from LHS => TRUE (flipped)
+  v = T   or   T = v
 
-WARNING: Do NOT skip Node 1! If v is absent from T, the answer
-is ALWAYS TRUE regardless of Eq2. Do not look for counterexamples.
+where v is ONE lone variable and v does NOT occur anywhere in T,
+then answer TRUE immediately.
 
-================================================================
-DECISION TREE (continue only if Node 1 did NOT fire)
-================================================================
-
-KEY DEFINITIONS:
-- LM(T) = leftmost variable of T. Rule: LM(A*B)=LM(A), LM(var)=var.
-- RM(T) = rightmost variable of T. Rule: RM(A*B)=RM(B), RM(var)=var.
-
-NODE 2: Does a counterexample magma exist?
-  Test LZ, RZ, C0, XOR (details below).
-  If Eq1 holds in any magma but Eq2 fails => Answer FALSE.
-
-NODE 3: Is Eq1 self-referential? (form x = T where x appears in T)
-  YES => Go to NODE 3A.
-  NO => If both sides of Eq1 are compound terms, lean FALSE.
-        Otherwise lean FALSE.
-
-NODE 3A: Self-reference boundary analysis
-  Compute LM(T) and RM(T). Count variables in T other than x (n_other).
-  Also count x_occ = how many times x appears in T.
-
-  If LM(T) = x AND RM(T) = x (both boundaries):
-    => Answer FALSE (these are very weak equations).
-
-  If n_other >= 3:
-    => Answer TRUE (very strong equation, 97% accurate).
-
-  If n_other = 2 AND x_occ >= 3 (x appears 3+ times in T):
-    => Answer FALSE (x dominates, equation not strong enough).
-
-  If n_other = 2 (remaining cases):
-    => Answer TRUE (strong equation, ~80% accurate).
-
-  If n_other < 2 (only x and at most 1 other variable in T):
-    => Answer FALSE (not strong enough to force arbitrary equations).
-
-================================================================
-COUNTEREXAMPLE MAGMA DETAILS (for Node 2)
-================================================================
-
-For each magma: first check Eq1 holds, then check Eq2 fails.
-If Eq1 does NOT hold in a magma, that magma cannot serve as counterexample.
-
---- Left-Zero (LZ): a*b = a ---
-  Every term evaluates to its leftmost variable.
-  Equation holds in LZ iff LM(left side) = LM(right side).
-
---- Right-Zero (RZ): a*b = b ---
-  Every term evaluates to its rightmost variable.
-  Equation holds in RZ iff RM(left side) = RM(right side).
-
---- Constant-Zero (C0): a*b = 0 on {0,1} ---
-  Any compound term (with *) becomes 0. Lone variable stays itself.
-  Equation holds iff both sides are the same lone variable,
-  or both sides contain * (both become 0).
-
---- XOR: a*b = (a+b) mod 2 on {0,1} ---
-  Term value = sum of all variable occurrences mod 2.
-  Equation holds iff each variable appears the same number of
-  times (mod 2) on both sides.
-
-ONLY use LZ, RZ, C0, XOR as counterexamples. Do NOT invent other
-magmas. If none of these 4 gives a counterexample, move to Node 3.
-
-================================================================
-HOW TO COMPUTE LM AND RM (critical skill)
-================================================================
-
-LM: always follow the LEFT branch at each * node.
-RM: always follow the RIGHT branch at each * node.
-
-LM(x) = x                    RM(x) = x
-LM(A*B) = LM(A)              RM(A*B) = RM(B)
+This is a theorem. No exceptions. Ignore Eq2.
 
 Examples:
-  ((y*x)*z)*w:   LM=y  RM=w
-  y*(z*(w*(y*z))): LM=y  RM=z
-  (x*(y*x))*((y*y)*z): LM=x  RM=z
-  x*(y*(z*w)):   LM=x  RM=w
+  x = y*(z*w)                   => TRUE
+  (y*z)*(y*(w*z)) = x           => TRUE
+
+Important:
+- Node 1 needs one ENTIRE side to be a single variable.
+- It does NOT apply to x*y = T or T = x*y.
+
+================================================================
+IF NODE 1 DID NOT FIRE
+================================================================
+
+Definitions:
+- LM(T) = leftmost variable of T.  LM(A*B)=LM(A), LM(var)=var.
+- RM(T) = rightmost variable of T. RM(A*B)=RM(B), RM(var)=var.
+
+================================================================
+NODE 2 — LOOK FOR A FALSE COUNTEREXAMPLE
+================================================================
+
+Use ONLY these 4 magmas: LZ, RZ, C0, XOR.
+
+If in one of them:
+  (i) Eq1 holds as an IDENTITY, and
+  (ii) Eq2 fails there,
+then answer FALSE.
+
+CRITICAL:
+- "Eq1 holds as an identity" means: for ALL variable assignments.
+- Never use one lucky valuation.
+- If Eq1 fails in a magma, that magma is unusable.
+
+Fast tests:
+
+LZ (a*b=a):
+- every term = its leftmost variable
+- equation holds iff LM(left)=LM(right)
+
+RZ (a*b=b):
+- every term = its rightmost variable
+- equation holds iff RM(left)=RM(right)
+
+C0 (a*b=0 on {0,1}):
+- every compound term = 0
+- lone variable stays itself
+- equation holds iff:
+  * both sides are the same lone variable, OR
+  * both sides are compound
+
+XOR (a*b = a+b mod 2 on {0,1}):
+- each term = parity sum of all variable occurrences
+- equation holds iff each variable has the same count mod 2 on both sides
+
+XOR procedure:
+- count each variable on left and right
+- reduce counts mod 2
+- all variables must match
+
+Example:
+  x = (y*(z*(z*x)))
+  left:  x
+  right: x+y+z+z = x+y   (mod 2)
+  mismatch on y, so it fails in XOR
+
+IMPORTANT FOR NODE 2:
+To prove FALSE, it is enough to find ONE magma where:
+  Eq1 holds and Eq2 fails.
+
+So when checking Eq2, always test all 4 magmas too.
+Do not stop just because Eq1 failed in some magma.
+
+================================================================
+NODE 3 — IF NODE 2 FOUND NO COUNTEREXAMPLE
+================================================================
+
+A) If Eq1 is exactly self-referential with one lone variable side:
+     x = T   or   T = x
+   and x appears somewhere in T,
+   then rewrite as x = T and go to Node 3A.
+
+B) Otherwise:
+   - If Eq1 has NO lone-variable side at all
+       (examples: x*y=T, T=x*y, compound=compound),
+     then answer TRUE.
+   - If Eq1 has a lone-variable side but is NOT self-referential,
+     Node 1 would already have fired, so this case cannot occur.
+
+This rule is important:
+- After Node 2 fails to find a counterexample,
+  non-self-ref equations NOT of form x=T should be answered TRUE.
+- Do NOT "lean FALSE" there.
+
+Examples of Node 3B TRUE:
+  x*y = z*(w*(u*x))            => TRUE if Node 2 found no counterexample
+  x*(y*z) = y*(w*u)            => TRUE if Node 2 found no counterexample
+  x*y = (y*x)*z                => TRUE if Node 2 found no counterexample
+
+================================================================
+NODE 3A — SELF-REFERENCE HEURISTIC (ONLY for x = T)
+================================================================
+
+Use this ONLY when Eq1 has exactly one side equal to the lone variable x,
+and x also occurs somewhere inside T.
+
+Compute:
+- LM(T), RM(T)
+- n_other = number of DISTINCT variables in T other than x
+- x_occ   = total number of occurrences of x in T
+
+Rules, in this order:
+
+1) If LM(T)=x AND RM(T)=x
+   => answer FALSE
+
+2) Else if n_other >= 3
+   => answer TRUE
+
+3) Else if n_other = 2 AND x_occ >= 3
+   => answer FALSE
+
+4) Else if n_other = 2 AND x_occ < 3
+   => answer TRUE
+
+5) Else if n_other < 2
+   => answer FALSE
+
+VERY IMPORTANT:
+- Rule 1 has priority over everything else.
+- So if LM(T)=x and RM(T)=x, answer FALSE even when n_other>=3.
+
+Examples:
+  x = (x*y)*(z*x)
+  LM=x and RM=x  => FALSE
+
+  x = y*((z*z)*(x*w))
+  LM=y, RM=w, n_other=3  => TRUE
+
+  x = ((x*x)*(y*z))*y
+  LM=x, RM=y, n_other=2, x_occ=2  => TRUE
+
+  x = (y*x)*(x*(x*z))
+  LM=y, RM=z, n_other=2, x_occ=3  => FALSE
+
+================================================================
+HOW TO COMPUTE LM AND RM
+================================================================
+
+LM: keep going left.
+RM: keep going right.
+
+LM(x)=x                 RM(x)=x
+LM(A*B)=LM(A)           RM(A*B)=RM(B)
+
+Examples:
+  ((y*x)*z)*w              LM=y   RM=w
+  y*(z*(w*(y*z)))          LM=y   RM=z
+  (x*(y*x))*((y*y)*z)      LM=x   RM=z
+  x*(y*(z*w))              LM=x   RM=w
 
 ================================================================
 HOW TO COUNT n_other AND x_occ
 ================================================================
 
-For Eq1 of form x = T:
-  n_other = how many DISTINCT variables appear in T that are NOT x.
-  x_occ = how many TIMES x appears in T (count every occurrence).
+Only for self-ref equations x = T.
 
-n_other examples:
-  x = y*(z*(w*(y*z)))  => variables in T: {y,z,w} => n_other=3
-  x = y*(x*(x*y))      => variables in T: {x,y} - {x} = {y} => n_other=1
-  x = (y*x)*(x*(x*z))  => variables in T: {x,y,z} - {x} = {y,z} => n_other=2
-  x = x*(x*(x*x))      => variables in T: {x} - {x} = {} => n_other=0
+- n_other = number of DISTINCT non-x variables in T
+- x_occ   = total number of x occurrences in T
 
-x_occ examples (count every x in T, including repeats):
-  x = (y*y)*((x*z)*z)  => x appears 1 time => x_occ=1
-  x = (y*(x*z))*(x*x)  => x appears 3 times => x_occ=3
-  x = ((x*y)*x)*(z*x)  => x appears 3 times => x_occ=3
+Examples:
+  x = y*(z*(w*(y*z)))      n_other=3, x_occ=0
+  x = y*(x*(x*y))          n_other=1, x_occ=2
+  x = (y*x)*(x*(x*z))      n_other=2, x_occ=3
+  x = x*(x*(x*x))          n_other=0, x_occ=4
+
+================================================================
+COMMON MISTAKES TO AVOID
+================================================================
+
+1) Never use a special valuation to make Eq1 true in a magma.
+   Identity means true for ALL valuations.
+
+2) In LZ/RZ, do not substitute values.
+   Just compare LM or RM.
+
+3) In XOR, do not test one assignment.
+   Compare variable counts mod 2.
+
+4) Node 3A is ONLY for equations of form x=T or T=x with one lone variable side.
+   Never use Node 3A for x*y=T, T=x*y, or compound=compound.
+
+5) If Eq1 is not self-ref x=T and Node 2 found no counterexample:
+   answer TRUE, not FALSE.
+
+6) For self-ref x=T:
+   check Rule 1 first.
+   Many mistakes come from ignoring LM(T)=x and RM(T)=x.
+
+7) For Node 2, Eq2 can fail in a different magma pattern than Eq1.
+   Always test all 4 magmas systematically.
 
 ================================================================
 WORKED EXAMPLES
 ================================================================
 
-EXAMPLE 1: TRUE via Node 1 (lone variable absent)
-  Eq1: x = y*(z*(w*(y*z)))   Eq2: x = ((x*(x*y))*y)*x
-  Variables in T: y, z, w. Variable x is absent.
-  => Node 1 fires. Answer: TRUE.
+EXAMPLE 1: TRUE by Node 1
+  Eq1: x = y*(z*(w*(y*z)))
+  x is absent from RHS
+  => TRUE
 
-EXAMPLE 2: FALSE via Node 2 (LZ counterexample)
-  Eq1: x = x*((y*z)*w)   Eq2: x = y*(z*(x*w))
-  LZ check: LM(x)=x, LM(x*((y*z)*w))=x. Eq1 holds in LZ.
-  LM(x)=x, LM(y*(z*(x*w)))=y. x != y. Eq2 fails in LZ.
-  => Node 2 fires. Answer: FALSE.
+EXAMPLE 2: FALSE by Node 2 using LZ
+  Eq1: x = x*((y*z)*w)
+  Eq2: x = y*(z*(x*w))
+  LZ: Eq1 holds since LM(x)=x and LM(RHS)=x
+      Eq2 fails since LM(x)=x but LM(RHS)=y
+  => FALSE
 
-EXAMPLE 3: TRUE via Node 3A (strong self-ref)
-  Eq1: x = y*((z*z)*(x*w))   Eq2: x*y = (z*(w*z))*y
-  Node 1: x in T, does not apply.
-  Node 2: LZ: LM(x)=x, LM(y*...)=y, x!=y. Eq1 fails in LZ.
-          RZ: RM(x)=x, RM(...*(x*w))=w, x!=w. Eq1 fails in RZ.
-          No counterexample found.
-  Node 3: Self-ref. T=y*((z*z)*(x*w)).
-          LM(T)=y, RM(T)=w. Neither is x.
-          Variables in T besides x: {y,z,w}. n_other=3.
-          n_other >= 2 => Answer: TRUE.
+EXAMPLE 3: TRUE by Node 3A
+  Eq1: x = y*((z*z)*(x*w))
+  Node 2:
+    LZ fails for Eq1 since x!=y
+    RZ fails for Eq1 since x!=w
+    C0 fails since variable != compound
+    XOR fails by parity count
+  Self-ref, LM=y, RM=w, n_other=3
+  => TRUE
 
-EXAMPLE 4: FALSE via Node 3A (weak self-ref, few other vars)
-  Eq1: x = (y*(y*(x*y)))*y   Eq2: x*y = (y*x)*(z*z)
-  Node 1: x in T, does not apply.
-  Node 2: No LZ/RZ counterexample (check shows Eq1 fails in both).
-  Node 3: Self-ref. T=(y*(y*(x*y)))*y.
-          LM(T)=y, RM(T)=y. Neither is x. Good.
-          Variables in T besides x: {y}. n_other=1.
-          n_other < 2 => Answer: FALSE.
+EXAMPLE 4: FALSE by Node 3A Rule 1
+  Eq1: x = (x*y)*(z*x)
+  LM=x and RM=x
+  => FALSE
 
-EXAMPLE 5: Avoiding common LZ/RZ mistake
-  Eq1: x = ((y*x)*y)*(z*w)   Eq2: x*(y*z) = (y*z)*y
-  LZ: LM(x)=x, LM(((y*x)*y)*(z*w))=LM((y*x)*y)=LM(y*x)=y.
-  x != y => Eq1 does NOT hold in LZ. Cannot use LZ.
-  RZ: RM(x)=x, RM(((y*x)*y)*(z*w))=RM(z*w)=w.
-  x != w => Eq1 does NOT hold in RZ. Cannot use RZ.
-  Self-ref: LM(T)=y!=x, RM(T)=w!=x. n_other=3 (y,z,w).
-  n_other >= 2 => Answer: TRUE.
+EXAMPLE 5: Non-self-ref with no Node 2 counterexample
+  Eq1: x*y = (y*x)*z
+  This is NOT of form x=T
+  If Node 2 finds no counterexample
+  => TRUE
 
 ================================================================
 QUICK REFERENCE
 ================================================================
-v=T, v absent from T              => ALWAYS TRUE
-counterexample magma found         => ALWAYS FALSE
-self-ref, both boundary            => FALSE
-self-ref, n_other >= 3             => TRUE  (97%)
-self-ref, n_other=2, x_occ >= 3   => FALSE (75%)
-self-ref, n_other=2, x_occ < 3    => TRUE  (80%)
-self-ref, n_other < 2              => FALSE (91%)
-composite = composite              => lean FALSE
-uncertain                          => lean FALSE
-LM(A*B) = LM(A).  RM(A*B) = RM(B).
+
+Node 1:
+  v = T, with lone variable v absent from T     => TRUE
+
+Node 2:
+  some LZ/RZ/C0/XOR has Eq1 true and Eq2 false  => FALSE
+
+Node 3A (ONLY for self-ref x = T):
+  LM(T)=x and RM(T)=x                           => FALSE
+  else n_other >= 3                            => TRUE
+  else n_other = 2 and x_occ >= 3              => FALSE
+  else n_other = 2 and x_occ < 3               => TRUE
+  else n_other < 2                             => FALSE
+
+Node 3B:
+  not self-ref x=T and Node 2 found no cex     => TRUE
+
+Core formulas:
+  LM(A*B)=LM(A)
+  RM(A*B)=RM(B)
+
+Identity tests:
+  LZ  : compare LM
+  RZ  : compare RM
+  C0  : same lone variable OR both compound
+  XOR : same variable counts mod 2

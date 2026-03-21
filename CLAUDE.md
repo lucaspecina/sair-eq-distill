@@ -30,13 +30,47 @@ maximice la accuracy de un modelo chico prediciendo "¿ley A implica ley B?".
 
 ## Cómo trabajamos — autoresearch
 
-**Autoresearch es nuestro workflow, NO un approach para resolver el problema.**
-Es la metodología de trabajo: Claude Code corre autónomamente (overnight o en
-sesiones largas), investigando, prototipando, y experimentando. El humano
-revisa resultados, da dirección, y relanza.
+### Autoresearch ≠ método de solución
 
+Hay DOS niveles. No confundirlos:
+
+```
+NIVEL META:   AUTORESEARCH (workflow / orquestador)
+              Decide QUÉ métodos probar, cuándo pivotar, qué recordar.
+              Es el coordinador + workers + memoria + evaluación.
+                    │
+NIVEL MÉTODO: │── Análisis de datos + reglas manuales (funcionó: 78→83.5%)
+              │── AlphaEvolve / evolutionary optimization (FRACASÓ: 40+ intentos)
+              │── Append-mode con LLM (parcial: 84% pero inestable)
+              │── Mining del dataset 22M (no intentado aún)
+              │── Lookup tables / encodings comprimidos (no intentado)
+              └── ...cualquier otro approach que un worker elija
+```
+
+**Autoresearch** = la metodología de trabajo. Cómo orquestamos agentes
+autónomos que investigan, prototipan, y experimentan.
+
+**Método** = lo que cada worker decide hacer dentro de su sesión.
+AlphaEvolve, editar reglas, minar datos, etc. son métodos.
+
+Un worker puede elegir cualquier método. El autoresearch decide si el
+resultado se mantiene (keep) o se descarta (revert), y transmite
+aprendizajes al siguiente worker.
+
+**Ejemplo concreto de la confusión a evitar:** "Probemos AlphaEvolve como
+autoresearch" es incorrecto. AlphaEvolve es un MÉTODO que un worker puede
+usar. Ya lo probamos (40+ variantes, 2 versiones del optimizer, toda una
+noche) y fracasó consistentemente — destruye TRUE accuracy cada vez.
+Está registrado en `tried_approaches.log` y `research/synthesis/session-3-findings.md`.
+
+### El workflow concreto
+
+Es la capa META. El humano revisa resultados, da dirección, y relanza.
+
+- `coordinator.md` define el loop del orquestador
+- `program.md` define las instrucciones para cada worker
+- `tried_approaches.log` es la memoria entre ciclos
 - `watch.sh` relanza Claude si se cae
-- `TODO.md` define qué hay que hacer (Claude lee esto al arrancar)
 - Los hallazgos se documentan en `research/`
 - El progreso se trackea en `TODO.md` y `CHANGELOG.md`
 

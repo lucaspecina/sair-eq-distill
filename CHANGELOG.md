@@ -1,5 +1,20 @@
 # Changelog
 
+## 2026-03-21 (session 5 — SheetEvolve)
+- **SheetEvolve optimizer built** (`optim/sheetevolve.py`): evolutionary cheatsheet optimizer
+  - gpt-5-nano evaluator (competition target), gpt-5.4 evolver
+  - Fixed seed=42 problem sets (fair comparison across generations)
+  - Parent eval caching (0 API calls for re-evaluation)
+  - Diversity rejection (>20% edit distance required)
+  - Cascaded evaluation: 50-problem quick filter → 200-problem full eval
+  - CLI flags for controlled testing (--stage1, --stage2, --variants)
+- **89.0% on official eval** — best ever (+5.5 pts over 83.5% previous best)
+  - TRUE accuracy: 98% (was 84%), FALSE accuracy: 82% (was 73%)
+  - Key insight found by evolver: Node 3B — non-self-ref equations with no counterexample → TRUE
+  - 2 generations, 1706 API calls, 36.5 min
+- Dry run pipeline tested first (1 gen, 1 variant, 5/10 probs) before real run
+- pi-autoresearch investigated and compared to Karpathy's pattern
+
 ## 2026-03-20 (session 4 — autoresearch infrastructure)
 - **Autoresearch system built**: coordinator.md + program.md + watch.sh + tried_approaches.log
 - Coordinator spawns fresh worker agents every ~30min, evaluates with fixed script, keep/revert

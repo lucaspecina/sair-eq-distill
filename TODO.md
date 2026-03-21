@@ -1,18 +1,15 @@
 # TODO
 
-## Estado actual (2026-03-20)
-- Deadline: 20 abril 2026 (~1 mes)
-- current.txt: 9.8KB, 78% on gpt-5-nano (200 problems)
+## Estado actual (2026-03-21)
+- Deadline: 20 abril 2026 (~30 días)
+- current.txt: 7.9KB, **89% on gpt-5-nano** (200 problems, official eval)
 - Leader (Kendon): 93.3% normal, 79.9% hard
-- Gap: ~15 pts on normal
-- Deterministic rule floor: 72.4% (lone-var + LZ/RZ), extendable to ~78% (+ C0 + XOR)
-- Autoresearch infrastructure: BUILT, pendiente lanzar
+- Gap: ~4 pts on normal
+- SheetEvolve optimizer: WORKING, produced 89% in 2 generations
 
-### Immediate — Lanzar autoresearch
-1. [ ] Crear results.tsv con header
-2. [ ] Crear cheatsheets/best.txt (copia de current.txt)
-3. [ ] Test run: un ciclo completo coordinator → worker → eval → keep/revert
-4. [ ] Lanzar watch.sh y dejar corriendo
+### Immediate
+1. [ ] Run more SheetEvolve generations to push past 89%
+2. [ ] Validate best cheatsheet on SAIR playground (10 credits/day)
 
 ### Medium-term
 5. [ ] Validate best cheatsheet on SAIR playground (10 credits/day)
@@ -57,6 +54,8 @@
 - [x] Identified 16 mathematical rules for cheatsheet encoding — 2026-03-19
 - [x] Competition intel from Tao blog + benchmark analysis — 2026-03-19
 - [x] Codex strategy reviews (3 sessions) — 2026-03-19
+- [x] SheetEvolve optimizer built and validated — 2026-03-21
+- [x] 89% on gpt-5-nano (200 probs) — best ever, +5.5 pts — 2026-03-21
 - [x] Evolutionary optimizer designed (AlphaEvolve-inspired) — 2026-03-19
 - [x] Research synthesis session 2 — 2026-03-19
 - [x] Evolutionary optimizer v1 (evolve_cheatsheet.py) — 2026-03-19

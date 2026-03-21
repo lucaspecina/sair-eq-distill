@@ -1,0 +1,36 @@
+{
+  "gen": 2,
+  "pool": [
+    {
+      "name": "gen2_v1",
+      "score": 0.865,
+      "size": 7969
+    },
+    {
+      "name": "gen1_v1",
+      "score": 0.85,
+      "size": 8729
+    },
+    {
+      "name": "gen2_v0",
+      "score": 0.785,
+      "size": 8192
+    },
+    {
+      "name": "gen1_v0",
+      "score": 0.76,
+      "size": 8268
+    },
+    {
+      "name": "gen1_v2",
+      "score": 0.76,
+      "size": 7570
+    }
+  ],
+  "best": {
+    "name": "gen2_v1",
+    "score": 0.865
+  },
+  "api_calls": 1706,
+  "elapsed_s": 858.8
+}
