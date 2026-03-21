@@ -1,5 +1,18 @@
 # Changelog
 
+## 2026-03-20 (session 4 — autoresearch infrastructure)
+- **Autoresearch system built**: coordinator.md + program.md + watch.sh + tried_approaches.log
+- Coordinator spawns fresh worker agents every ~30min, evaluates with fixed script, keep/revert
+- Based on Karpathy's autoresearch pattern: single metric, fresh context, files as memory
+- **Append-mode optimizer** (evolve_append.py): adds sections without rewriting base cheatsheet
+- Append results: 88% peak on nano (but high variance), 84% avg on nano+mini
+- **Definitive nano eval**: current.txt = 78% on 200 problems (gpt-5-nano)
+- Cheatsheet upgraded with C0/XOR counterexample battery + false-first safety checks
+- Key insight: gpt-5.4 evolver consistently destroys TRUE accuracy when rewriting — append-only is safer
+- Key insight: small samples (20-50 problems) have too much variance for reliable comparison
+- $158 spent overnight on evolutionary approaches with no sustained improvement → led to autoresearch redesign
+- tried_approaches.log created as cross-session memory (5 approaches logged)
+
 ## 2026-03-19 (session 3 — evolutionary optimizer running)
 - **Evolutionary optimizer working end-to-end** with gpt-4.1-mini as evaluator, gpt-5.4 as evolver
 - Key fix: same problem set within each generation for fair comparison (different between gens)

@@ -54,7 +54,7 @@ SCORE=$(/c/Users/YT40432/miniconda3/envs/eq-distill/python.exe -u eval/evaluate.
   --cheatsheet cheatsheets/current.txt \
   --models gpt-5-nano \
   --sample 200 \
-  --concurrent 20 2>&1 | grep "^RESULT:" | grep -oP 'accuracy=\K[0-9.]+')
+  --concurrent 20 2>&1 | grep "^RESULT:" | grep -o 'accuracy=[0-9.]*' | cut -d= -f2)
 echo "Score: $SCORE"
 ```
 

@@ -1,35 +1,39 @@
 # TODO
 
-## PLAN DE ACCIÓN — Sesión 4
-
-### Estado actual (2026-03-20)
+## Estado actual (2026-03-20)
 - Deadline: 20 abril 2026 (~1 mes)
-- current.txt: v2 gen3_x1, 6.7KB, evolved from empty seed
-- Scores: 67% on gpt-4.1-mini (1200 probs), ~82% on nano (50 probs)
+- current.txt: 9.8KB, 78% on gpt-5-nano (200 problems)
 - Leader (Kendon): 93.3% normal, 79.9% hard
-- Gap: ~11 pts on normal, ~26 pts on hard
+- Gap: ~15 pts on normal
 - Deterministic rule floor: 72.4% (lone-var + LZ/RZ), extendable to ~78% (+ C0 + XOR)
+- Autoresearch infrastructure: BUILT, pendiente lanzar
 
-### Immediate priorities
-1. [ ] Run nano optimizer with C0/XOR knowledge — see if evolver can improve
-2. [ ] Validate best cheatsheet on SAIR playground (10 credits/day)
-3. [ ] Add constant-zero and XOR counterexample procedures to cheatsheet via evolution
-4. [ ] Test cheatsheet on gpt-5-mini (reasoning, strong) — find version that doesn't hurt
+### Immediate — Lanzar autoresearch
+1. [ ] Crear results.tsv con header
+2. [ ] Crear cheatsheets/best.txt (copia de current.txt)
+3. [ ] Test run: un ciclo completo coordinator → worker → eval → keep/revert
+4. [ ] Lanzar watch.sh y dejar corriendo
 
 ### Medium-term
-5. [ ] Extract patterns from full 22M dataset for harder cases
-6. [ ] Implement partial mutation (modify sections, not full rewrite)
-7. [ ] Try GEPA-style Pareto front for maintaining diverse cheatsheets
-8. [ ] Investigate "free-form prompt template" option in competition
-9. [ ] Test on nano with full 1200 problems (slow but definitive)
+5. [ ] Validate best cheatsheet on SAIR playground (10 credits/day)
+6. [ ] Extract patterns from full 22M dataset for harder cases
+7. [ ] Investigate "free-form prompt template" option in competition
+8. [ ] Test cheatsheet on gpt-5-mini — find version that doesn't hurt it
+9. [ ] Study what Kendon's 93% approach might be doing differently
 
-### Research lines
+### Research lines (para workers)
 - [ ] Explore duality rule: if A→B then dual(A)→dual(B)
-- [ ] Investigate more 2-element magma counterexamples (16 tables analyzed)
-- [ ] Study what Kendon's 93% approach might be doing differently
-- [ ] Look into programmatic rule extraction vs LLM evolution
+- [ ] More 2-element magma counterexamples beyond LZ/RZ/C0/XOR
+- [ ] Programmatic rule extraction from 22M dataset
+- [ ] Radically different formats: decision tree, lookup table
+- [ ] Mine Lean proofs from ETP for TRUE reasoning patterns
+- [ ] Compress existing rules to make room for more content
 
 ## Done
+- [x] Autoresearch infrastructure: coordinator.md, program.md, watch.sh, tried_approaches.log — 2026-03-20
+- [x] Append-mode optimizer (evolve_append.py) — 2026-03-20
+- [x] Definitive nano eval: 78% on 200 problems — 2026-03-20
+- [x] C0/XOR counterexample battery added to cheatsheet — 2026-03-20
 - [x] Investigate competition and resources — 2026-03-18
 - [x] Bootstrap project structure — 2026-03-18
 - [x] Download datasets — 2026-03-18
