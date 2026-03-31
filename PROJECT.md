@@ -1,8 +1,18 @@
 # eq-distill
 
+> Este documento es la estrella polar del proyecto.
+> Toda decisión debe alinearse con lo que dice acá.
+
 ## What is this?
 
 Proyecto para competir en el **Mathematics Distillation Challenge** de la SAIR Foundation (organizado por Terence Tao y Damek Davis). El objetivo es destilar 22 millones de resultados del Equational Theories Project (ETP) en un "cheat sheet" compacto (≤10KB) que ayude a un modelo de lenguaje chico a resolver problemas de álgebra universal (¿la ley A implica la ley B?).
+
+## LA PREGUNTA
+
+> **¿Esto nos acerca a ganar la competencia?**
+>
+> Aplicar al evaluar, diseñar, priorizar, y revisar.
+> Si un approach no impacta el score de competencia, NO importa.
 
 ## Key concepts
 
@@ -10,7 +20,7 @@ Proyecto para competir en el **Mathematics Distillation Challenge** de la SAIR F
 - **Leyes ecuacionales:** Identidades como `x ◇ y = y ◇ x`. El ETP trabaja con 4694 leyes de hasta 4 operaciones.
 - **Implicación:** A → B es verdadero si todo magma que cumple A necesariamente cumple B.
 - **Cheat sheet:** Texto ≤10KB inyectado en el prompt de un modelo chico para guiar sus predicciones.
-- **Autoresearch:** Nuestro workflow de trabajo. Claude Code corre autónomamente investigando, prototipando y experimentando. NO es un approach — es cómo trabajamos.
+- **Autoresearch:** Nuestro workflow de trabajo (cómo trabajamos, no qué hacemos).
 
 ## Design principles
 
@@ -19,23 +29,6 @@ Proyecto para competir en el **Mathematics Distillation Challenge** de la SAIR F
 3. **Densidad de información** — 10KB es muy poco. Cada byte debe aportar. Preferir reglas generales sobre listas de casos.
 4. **Iteración rápida** — Evaluar ideas rápido, descartar lo que no funciona, profundizar lo que sí.
 5. **Simplicidad** — A igual accuracy, el cheat sheet más simple gana (menos riesgo de overfitting).
-
-## Architecture overview
-
-```
-[Datos ETP] → [Análisis] → [Cheat Sheet candidato] → [Evaluador local] → [Accuracy]
-                                     ↑                        |
-                                     +--- keep/discard -------+
-
-[Playground SAIR] → Validación final (10 créditos/día)
-```
-
-Componentes:
-- **data/**: Datos crudos y procesados del ETP (ecuaciones, implicaciones, magmas)
-- **analysis/**: Scripts y notebooks de exploración del dataset
-- **cheatsheets/**: Versiones del cheat sheet (el artefacto que se submite)
-- **eval/**: Pipeline de evaluación local (modelo chico + subset de problemas)
-- **optim/**: Estrategias de optimización (evolutivo, GEPA, heurísticas)
 
 ## What success looks like
 

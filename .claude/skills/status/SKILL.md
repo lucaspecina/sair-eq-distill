@@ -1,6 +1,6 @@
 ---
 name: status
-description: Show project status overview. Use when user asks about project status, progress, or current state.
+description: "Show project status overview: current accuracy, active issues, TODO board, recent experiments. Use when user asks 'status', 'qué onda', 'cómo estamos', or 'dónde estamos'."
 disable-model-invocation: true
 ---
 
@@ -12,24 +12,29 @@ Show a quick overview of the project state.
 
 1. Read `CURRENT_STATE.md` and `TODO.md`
 
-2. Check if cheat sheet exists and its size:
+2. Read active issues:
 ```bash
-ls -la cheatsheets/ 2>/dev/null
+grep -l "status: active" issues/*.md 2>/dev/null | head -5
 ```
 
-3. Check results.tsv for experiment history:
+3. Check cheat sheet size:
+```bash
+ls -la cheatsheets/current.txt 2>/dev/null
+```
+
+4. Check results.tsv for experiment history:
 ```bash
 wc -l results.tsv 2>/dev/null && tail -5 results.tsv 2>/dev/null || echo "No experiments yet"
 ```
 
-4. Check git state:
+5. Check git state:
 ```bash
 git log --oneline -5
 git status -s
 ```
 
-5. Present to user in Spanish:
-   - Tareas in progress y pending (from TODO.md)
-   - Estado de módulos (from CURRENT_STATE.md)
-   - Últimos experimentos (from results.tsv)
+6. Present to user in Spanish:
+   - Issues activos (Status header de cada uno)
+   - Tareas NOW y NEXT (from TODO.md)
    - Último accuracy conocido
+   - Últimos experimentos (from results.tsv)

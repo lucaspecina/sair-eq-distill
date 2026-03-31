@@ -1,39 +1,51 @@
 # Current State
 
-## Overview
+## Qué es esto?
 
-Cheatsheet v6 achieves **96.7% accuracy** on normal problems with gpt-5-mini (29/30).
-This is the best result so far, up from 72% baseline. The key insight: a focused,
-concise cheatsheet (2.7KB) outperforms comprehensive ones (6.3KB).
+Estamos compitiendo en el Mathematics Distillation Challenge de la SAIR Foundation.
+El desafío: comprimir 22 millones de implicaciones matemáticas en un "cheat sheet"
+de máximo 10KB que ayude a un modelo de lenguaje chico a predecir si una ley
+ecuacional implica otra.
 
-Extensive research completed on dataset structure, model reasoning patterns,
-and potential optimization approaches (evolutionary, modular, data-driven).
+Nuestro cheat sheet se inyecta en el prompt del modelo evaluador. El modelo lee
+el cheat sheet + la pregunta, y responde TRUE o FALSE.
 
-## Modules / Components
+## Qué funciona hoy
 
-| Module | Purpose | Status |
-|--------|---------|--------|
-| `analysis/` | Dataset exploration scripts | 5 scripts, major findings documented |
-| `cheatsheets/` | Cheat sheet versions | v6 is current best (96.7%) |
-| `eval/` | Multi-model evaluation pipeline | Working (gpt-5-nano, gpt-5-mini) |
-| `optim/` | Optimization strategies | OpenEvolve prototype ready |
-| `research/` | Research notes and synthesis | 7 documents, synthesis complete |
-| `data/raw/` | ETP data + HuggingFace datasets | Complete |
+- **Cheat sheet actual:** `cheatsheets/current.txt` — 7.9KB, **89% accuracy** en
+  200 problemas con gpt-5-nano (evaluación oficial local)
+- **SheetEvolve** (`optim/sheetevolve.py`): optimizer evolutivo que usa gpt-5-nano
+  como evaluador y gpt-5.4 como evolucionador. Produjo el 89% en 2 generaciones.
+  Es nuestra herramienta principal de optimización.
+- **Evaluador local** (`eval/evaluate.py`): evalúa cheatsheets contra subsets de
+  problemas. Multi-modelo (gpt-5-nano, gpt-5-mini, etc.). Parsea `VERDICT: TRUE/FALSE`.
+- **Research extenso:** 30+ notas de investigación, 3 synthesis documents, análisis
+  de dataset, patrones de razonamiento de modelos, estrategias de optimización.
+- **Datos del ETP:** dataset completo descargado y procesado (ecuaciones, implicaciones,
+  magmas, DAG de 1415 nodos).
 
-## Key APIs
+## Qué NO funciona todavía
 
-- `eval/evaluate.py` — `python eval/evaluate.py --sample N --models "model1,model2"`
-  Evaluates cheatsheet against problem set. Reports per-model + average accuracy.
-  Parses `VERDICT: TRUE/FALSE` from model responses.
+- **Playground SAIR:** Descubrimos que usa modelos DISTINTOS a los que evaluamos
+  localmente (gpt-oss-120b, llama3.3-70b, gemini-flash-lite, grok-4.1-fast).
+  Necesitamos validar ahí.
+- **Hard problems:** El cheat sheet está optimizado para problemas normales. Los
+  hard problems (~30% del score) necesitan más trabajo.
+- **Generalización multi-modelo:** El cheat sheet ayuda a nano pero puede perjudicar
+  a otros modelos (ej: gpt-5-mini).
 
-## Test coverage
+## Cómo probarlo
 
-No automated tests yet. Validation is via evaluation accuracy.
+```bash
+# Activar environment
+conda activate eq-distill
 
-## Known limitations
+# Evaluar el cheat sheet actual
+python eval/evaluate.py --cheatsheet cheatsheets/current.txt
 
-- gpt-5-nano produces empty responses (reasoning token exhaustion) with ≤16K tokens
-- Hard problems timeout with current API speed (~2-5 min per problem)
-- Background asyncio tasks don't flush output on Windows
-- Haven't tested on SAIR playground yet (10 credits/day)
-- Haven't confirmed results with gpt-5-nano at 32K+ tokens
+# Correr SheetEvolve (1 generación de prueba)
+python optim/sheetevolve.py --stage1 --variants 1
+
+# Verificar tamaño del cheat sheet
+python -c "import os; s=os.path.getsize('cheatsheets/current.txt'); print(f'{s} bytes ({s/1024:.1f}KB)'); assert s<=10240"
+```

@@ -1,89 +1,48 @@
 # Changelog
 
-## 2026-03-21 (session 5 — SheetEvolve)
+## 2026-03-31 — Workflow alignment (I-004)
+- Alineado repo completo con user-level skills (dev-workflow, project-bootstrap)
+- PROJECT.md: agregado LA PREGUNTA, removido architecture section
+- CLAUDE.md: reescrito a formato canónico (~130 líneas, trigger table, issue tracking)
+- TODO.md: convertido a NOW/NEXT/BLOCKED/LATER con I-NNN refs
+- CURRENT_STATE.md: actualizado a estado real (89% nano, SheetEvolve)
+- AUTORESEARCH.md: creado config formal (OFF)
+- issues/: creado sistema de tracking (I-001 a I-004)
+- experiments/, research/archive/: directorios creados
+- Skills actualizados (test, status, experiment) con trigger keywords y conda env
+- Cleanup: eliminados 23 scripts obsoletos (generate_cheatsheet_*.py, old evolvers)
+- coordinator.md y program.md movidos a research/archive/
+
+## 2026-03-21 — SheetEvolve: 89% best ever (I-002)
 - **SheetEvolve optimizer built** (`optim/sheetevolve.py`): evolutionary cheatsheet optimizer
   - gpt-5-nano evaluator (competition target), gpt-5.4 evolver
-  - Fixed seed=42 problem sets (fair comparison across generations)
-  - Parent eval caching (0 API calls for re-evaluation)
-  - Diversity rejection (>20% edit distance required)
+  - Fixed seed=42 problem sets, parent eval caching, diversity rejection
   - Cascaded evaluation: 50-problem quick filter → 200-problem full eval
-  - CLI flags for controlled testing (--stage1, --stage2, --variants)
 - **89.0% on official eval** — best ever (+5.5 pts over 83.5% previous best)
   - TRUE accuracy: 98% (was 84%), FALSE accuracy: 82% (was 73%)
-  - Key insight found by evolver: Node 3B — non-self-ref equations with no counterexample → TRUE
+  - Key insight found by evolver: Node 3B rule
   - 2 generations, 1706 API calls, 36.5 min
-- Dry run pipeline tested first (1 gen, 1 variant, 5/10 probs) before real run
-- pi-autoresearch investigated and compared to Karpathy's pattern
+- Playground models discovered: gpt-oss-120b, llama3.3-70b, gemini-flash-lite, grok-4.1-fast (I-003)
 
-## 2026-03-20 (session 4 — autoresearch infrastructure)
-- **Autoresearch system built**: coordinator.md + program.md + watch.sh + tried_approaches.log
-- Coordinator spawns fresh worker agents every ~30min, evaluates with fixed script, keep/revert
-- Based on Karpathy's autoresearch pattern: single metric, fresh context, files as memory
-- **Append-mode optimizer** (evolve_append.py): adds sections without rewriting base cheatsheet
-- Append results: 88% peak on nano (but high variance), 84% avg on nano+mini
-- **Definitive nano eval**: current.txt = 78% on 200 problems (gpt-5-nano)
-- Cheatsheet upgraded with C0/XOR counterexample battery + false-first safety checks
-- Key insight: gpt-5.4 evolver consistently destroys TRUE accuracy when rewriting — append-only is safer
-- Key insight: small samples (20-50 problems) have too much variance for reliable comparison
-- $158 spent overnight on evolutionary approaches with no sustained improvement → led to autoresearch redesign
-- tried_approaches.log created as cross-session memory (5 approaches logged)
+## 2026-03-20 — Autoresearch infrastructure (I-002)
+- Autoresearch system built: coordinator + program + watch.sh + tried_approaches.log
+- Append-mode optimizer (evolve_append.py): 88% peak but high variance
+- Definitive nano eval: current.txt = 78% on 200 problems
+- Cheatsheet upgraded with C0/XOR counterexample battery
+- Key insight: gpt-5.4 evolver destroys TRUE accuracy when rewriting — append-only safer
+- $158 spent overnight on evolutionary approaches with no sustained improvement
 
-## 2026-03-19 (session 3 — evolutionary optimizer running)
-- **Evolutionary optimizer working end-to-end** with gpt-4.1-mini as evaluator, gpt-5.4 as evolver
-- Key fix: same problem set within each generation for fair comparison (different between gens)
-- 100 problems per eval (80 normal + 20 hard), concurrency 50
-- **gen4_v0 = new current.txt** (5.7KB, avg ~71% on gpt-4.1-mini across 7 evals)
-- Seed (empty) 50% → Best 70% in 10 generations
-- gpt-4o-mini tested: says FALSE to everything with SAIR template, useless as evaluator
-- gpt-4.1-mini deployed and validated: non-reasoning, fast (~2s/call), uses cheatsheet
-- claude-haiku-4-5 connected via AnthropicFoundry SDK on Azure
-- SAIR template confirmed: cheatsheet goes inline in user message (Jinja2 from competition page)
-- Old cheatsheets (v5-v16) deleted, clean start
-
-## 2026-03-19 (session 2 — robust eval, iteration & evolutionary optimizer)
+## 2026-03-19 — Robust eval + evolutionary optimizer (I-002)
 - **CRITICAL: 96.7% was inflated** (fixed seed, normal only). Real: ~84% mini, ~57% nano
-- Created eval/eval_robust.py — mixes normal+hard, random seeds, per-difficulty breakdown
-- Created eval/analyze_errors.py — error classification and pattern analysis
-- Controlled A/B test: v6 vs v12-v16, 5 variants on same seed=12345
-- **v15 (+"Be concise") = best: +5.3 pts** over v6 (74.7% cross-model avg)
-- Phi-4 destroyed by cheatsheets (53%→6%) — too weak, excluded
-- nano primary error: empty responses (28/30 = token exhaustion)
-- mini primary error: false positives on hard (91% fabricated substitution proofs)
-- Identified 16 mathematical rules for encoding, 5 NOT in v6
-- Competition intel: Tao says baseline 50%, best 55-60%, "cheap/open-source models"
-- Vision: winning cheatsheet = [decoder] + [compressed math payload], NOT tutorial
-- **Evolutionary optimizer** designed (AlphaEvolve-inspired):
-  - nano = alumno (toma examen), gpt-5.4 = profesor (mejora cheatsheet)
-  - Pool con diversidad, datos frescos cada eval, todo en paralelo
-  - `optim/evolve_cheatsheet.py` implementado y listo para correr
-- Codex reviews (3 sessions): strategy, error methodology, format families
-- 8 new research notes + session-2 synthesis
-- CLAUDE.md updated with competition-winning mandate and cheatsheet vision
+- Created eval_robust.py, analyze_errors.py
+- v15 (+"Be concise") = best: +5.3 pts over v6
+- Evolutionary optimizer v1+v2 designed and implemented
+- Competition intel: Tao says baseline 50%, best 55-60%
+- Vision: cheatsheet = decoder + compressed math payload
 
-## 2026-03-19 (overnight autoresearch session 1)
-- **Cheatsheet v6: 96.7%** on 30 normal problems (gpt-5-mini) — best result (later found inflated)
-- Tested 11 cheatsheet versions (v0-v11), v6 is locally optimal
-- Key insight: concise focused (2.7KB) >> comprehensive (6.3KB)
-- Raised max_completion_tokens to 16384 (reasoning models need space)
-- Dropped Phi-4 from eval (not in SAIR benchmark, too weak)
-- v6 on hard2: 60% (mini has TRUE bias on hard, opposite of normal)
-- gpt-5-nano: 40-50% even with 32K tokens (too weak)
-- Dataset analysis: DAG (1415 nodes, height 15), satisfaction scores, equivalence classes
-- Multi-feature predictor: 85.4% ceiling on normal
-- Quantified reasoning patterns from 25-model benchmark (substitution 4x more in correct)
-- 14 research notes + 1 synthesis document
-- Information theory: v6 near text-compression limit for normal problems
-- Birkhoff completeness validates substitution as complete technique
-- OpenEvolve prototype ready but needs API access for evolutionary runs
-- Competition hard ≠ ETP hard (finite proofs exist, just non-obvious)
-- Model biases: mini=TRUE bias on hard, nano=FALSE bias (opposite!)
-
-## 2026-03-18
-- Bootstrap del proyecto: estructura de directorios, documentos estándar, skills
-- Investigación de la competencia SAIR: reglas, playground, datos disponibles
-- Investigación de autoresearch: patrón Karpathy, RALPH, mejores prácticas
-- Dataset analysis: 22M implications, 1415 equivalence classes, DAG height 15
-- Multi-feature predictor: 85.4% on normal (ceiling for heuristics)
-- Identified 5 isomorphisms with other fields
-- Quantified reasoning patterns from 25-model benchmark
-- Prototyped OpenEvolve integration for prompt evolution
+## 2026-03-18 — Bootstrap (I-001)
+- Proyecto bootstrappeado: estructura, documentos, skills
+- Investigación de competencia SAIR y datasets
+- Dataset analysis: 22M implications, 1415 equiv classes, DAG height 15
+- Multi-feature predictor: 85.4% ceiling
+- Baseline: 72% con gpt-5-mini

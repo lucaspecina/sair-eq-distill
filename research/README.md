@@ -46,8 +46,13 @@
 5. `notes/model-reasoning-analysis.md` — How models reason about implications
 6. `notes/isomorphisms.md` — Connections to other fields
 
+## Archive
+- `archive/coordinator.md` — Old autoresearch orchestrator (superseded by AUTORESEARCH.md + dev-workflow)
+- `archive/program.md` — Old worker instructions (superseded by dev-workflow skills)
+
 ## Rules
-- New explorations → `notes/`
-- Conclusions with evidence → `synthesis/`
+- New explorations → `notes/` (referenced from issues)
+- Conclusions with evidence → `synthesis/` (promoted from closed issues)
 - Superseded docs → `archive/`
 - **Update this index** every time you create/move a research doc
+- Cross-reference with `I-NNN` issues
