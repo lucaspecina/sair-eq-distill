@@ -38,6 +38,10 @@
 | Paper insights | [notes/session3-paper-insights.md](notes/session3-paper-insights.md) | GEPA, EvoPrompt, competition intel |
 | Full evaluation | [notes/session3-full-eval.md](notes/session3-full-eval.md) | 67% on 1200 probs (gpt-4.1-mini) |
 
+| **SESSION 5 (SheetEvolve)** | | **89% best ever, playground discovery** |
+| Playground models discovery | [notes/playground-models-discovery.md](notes/playground-models-discovery.md) | CRITICAL: playground uses different models (I-003) |
+| Playground results 2026-03-21 | [notes/playground-results-2026-03-21.md](notes/playground-results-2026-03-21.md) | First playground validation attempt |
+
 ## Reading order
 1. **`synthesis/session-3-findings.md`** — LATEST. Evolutionary optimizer, data rules, multi-model.
 2. `synthesis/session-1-findings.md` — Key findings from session 1.

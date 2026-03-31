@@ -1,25 +1,24 @@
 # TODO
 
 ## NOW
-- [ ] Alinear repo con workflow estándar → I-004
 - [ ] Run más generaciones de SheetEvolve para superar 89% → I-002
+- [ ] Validar cheatsheet en playground SAIR (10 créditos/día) → I-003
 
 ## NEXT
-- [ ] Validar cheatsheet en playground SAIR (10 créditos/día) → I-003
 - [ ] Extraer patrones del dataset 22M para hard problems → I-002
-- [ ] Investigar opción "free-form prompt template" de la competencia
-- [ ] Test cheatsheet en modelos del playground (gpt-oss-120b, llama3.3-70b, etc.)
+- [ ] Investigar opción "free-form prompt template" de la competencia → I-002
+- [ ] Test cheatsheet en modelos del playground (gpt-oss-120b, llama3.3-70b, etc.) → I-003
 
 ## BLOCKED
 (nada bloqueado)
 
 ## LATER
-- [ ] Explorar duality rule: if A→B then dual(A)→dual(B)
-- [ ] Más counterexamples de 2-element magma
-- [ ] Extracción programática de reglas del dataset 22M
-- [ ] Formatos radicalmente distintos: decision tree, lookup table
-- [ ] Minar Lean proofs del ETP para TRUE reasoning patterns
-- [ ] Comprimir reglas existentes para hacer espacio
+- [ ] Explorar duality rule: if A→B then dual(A)→dual(B) → I-002
+- [ ] Más counterexamples de 2-element magma → I-002
+- [ ] Extracción programática de reglas del dataset 22M → I-002
+- [ ] Formatos radicalmente distintos: decision tree, lookup table → I-002
+- [ ] Minar Lean proofs del ETP para TRUE reasoning patterns → I-002
+- [ ] Comprimir reglas existentes para hacer espacio → I-002
 
 ## DONE (recent)
 - [x] Alinear estructura con skills de usuario — I-004 — 2026-03-31

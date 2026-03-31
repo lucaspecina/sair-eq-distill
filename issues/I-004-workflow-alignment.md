@@ -4,7 +4,7 @@ title: Alinear repo con workflow estándar (skills de usuario)
 status: closed
 type: task
 created: 2026-03-31
-closed:
+closed: 2026-03-31
 ---
 
 # I-004: Alinear repo con workflow estándar (skills de usuario)
@@ -12,8 +12,8 @@ closed:
 ## Status
 - **Estado:** Completo — todos los docs, issues, skills y cleanup hechos
 - **Último resultado:** Repo alineado con dev-workflow, project-bootstrap, issue-tracking
-- **Último commit:** (pendiente aprobación usuario)
-- **Próximo paso:** Commit + continuar con I-002 o I-003
+- **Último commit:** 259cf43
+- **Próximo paso:** Cerrado. Continuar con I-002 o I-003
 
 ## Pregunta
 Alinear toda la estructura del repo con las user-level skills (dev-workflow,

@@ -32,7 +32,7 @@ LOOP:
 3. Validate size ≤10KB
 4. Run: conda run -n eq-distill python eval/evaluate.py --cheatsheet cheatsheets/current.txt
 5. Parse accuracy from RESULT line
-6. If accuracy improved → keep, commit with "experiment: <description> (I-NNN)"
+6. If accuracy improved → keep change, present to user for approval
 7. If accuracy same or worse → revert change
 8. Log to results.tsv
 9. Update issue Status header
@@ -47,5 +47,6 @@ a1b2c3d	0.8900	keep	SheetEvolve gen2 best
 
 ## After experiment
 - Update active issue Status header with results
-- If new best → commit cheatsheet
+- If new best → present to user, WAIT for approval before commit (I-NNN ref)
 - If no improvement → document in issue Log why
+- Log run in results.tsv
